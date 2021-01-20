@@ -17,4 +17,27 @@ sudo docker push localhost:5000/gmxapi-notebook:puhti
 
 sudo SINGULARITY_NOHTTPS=1 singularity build gromacs-notebook-puhti.sif deffile
 
+```
+
+### Deploying gromacs-notebook on Puhti
+
+```bash
+
+download singularity image from allas object storage
+
+
+```
+
+Open the port on Puhti
+
+```bash
+
+ssh -l yetukuri -L 8888:localhost:8888 puhti-login1.csc.fi
+```
+Launch gromacs-notebook
+
+```bash
+singularity exec -B /users/yetukuri:/users/yetukuri  gromacs.simg /docker_entry_points/notebook
+
+```
 
