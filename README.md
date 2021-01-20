@@ -40,4 +40,5 @@ Launch gromacs-notebook
 singularity exec -B /users/Puhti-username:/users/Puhti-username  gromacs-notebook-puhti.sif /docker_entry_points/notebook
 
 ```
-Open browser http://localhost:8888  and copy the token value generated after launching notebook. If successful, gromacs-notebook should be visible.
+Open browser http://localhost:8888  and copy the token value generated after launching notebook. or copy and paste full path (i.e., http://localhost:8888/?token=tokenkey)
+If successful, gromacs-notebook should be visible.
