@@ -24,8 +24,7 @@ sudo SINGULARITY_NOHTTPS=1 singularity build gromacs-notebook-puhti.sif deffile
 ```bash
 
 download singularity image from allas object storage
-
-
+wget https://a3s.fi/Gromacs_utilities/gromacs.tar.gz
 ```
 
 Open the port on Puhti (Just for testing purpose
@@ -37,7 +36,7 @@ ssh -l csc-username -L 8888:localhost:8888 puhti-login1.csc.fi  # change port nu
 Launch gromacs-notebook
 
 ```bash
-singularity exec -B /users/Puhti-username:/users/Puhti-username  gromacs-notebook-puhti.sif /docker_entry_points/notebook
+singularity exec -B /users/Puhti-username/gromacs:/data  gromacs-notebook-puhti.sif /docker_entry_points/notebook
 
 ```
 Open browser http://localhost:8888  and copy the token value generated after launching notebook. or copy and paste full path (i.e., http://localhost:8888/?token=tokenkey)
