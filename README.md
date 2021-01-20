@@ -32,12 +32,12 @@ Open the port on Puhti
 
 ```bash
 
-ssh -l yetukuri -L 8888:localhost:8888 puhti-login1.csc.fi
+ssh -l yetukuri -L 8888:localhost:8888 puhti-login1.csc.fi  # change port number if notebook is exposed on different port (default port is 8888 here)
 ```
 Launch gromacs-notebook
 
 ```bash
-singularity exec -B /users/yetukuri:/users/yetukuri  gromacs.simg /docker_entry_points/notebook
+singularity exec -B /users/Puhti-username:/users/Puhti-username  gromacs.simg /docker_entry_points/notebook
 
 ```
-
+Open browser http:localhost:8888
