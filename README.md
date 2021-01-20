@@ -19,26 +19,49 @@ sudo SINGULARITY_NOHTTPS=1 singularity build gromacs-notebook-puhti.sif deffile
 
 ```
 
-### Deploying gromacs-notebook on Puhti
+### Deploying gromacs-notebook on Puhti in home directory (not for production)
 
 ```bash
-
-download singularity image from allas object storage
+# Download singularity image from allas object storage
 wget https://a3s.fi/Gromacs_utilities/gromacs.tar.gz
 tar -xavf gromacs.tar.gz 
+cd gromacs
 ```
-
-Open the port on Puhti (Just for testing purpose
+Open the port on Puhti 
 
 ```bash
-
-ssh -l csc-username -L 8888:localhost:8888 puhti-login1.csc.fi  # change port number if notebook is exposed on different port (default port is 8888 here); choose login1 or login2 depending on where notebook is launched
+ssh -l csc-username -L 8888:localhost:8888 puhti-login1.csc.fi  # change port number if notebook is exposed on different port (default port is 8888 here); 
+                                                                # choose login1 or login2 node depending on where notebook is launched
 ```
 Launch gromacs-notebook
 
 ```bash
-singularity exec -B /users/Puhti-username/gromacs:/data  gromacs-notebook-puhti.sif /docker_entry_points/notebook
+singularity exec -B /users/Puhti-username  gromacs-notebook-puhti.sif /docker_entry_points/notebook
 
 ```
+Open browser http://localhost:8888  and copy the token value generated after launching notebook. or copy and paste full path (i.e., http://localhost:8888/?token=tokenkey)
+If successful, gromacs-notebook should be visible.
+
+
+### Deploying gromacs-notebook on Puhti in interactive node 
+
+```bash
+# Download singularity image from allas object storage
+wget https://a3s.fi/Gromacs_utilities/gromacs.tar.gz
+tar -xavf gromacs.tar.gz 
+cd gromacs
+```
+Open the port on lgoin node on Puhti and then on compute node 
+```bash
+ssh -l csc-username -L 8888:localhost:8888 puhti-login1.csc.fi  # change port number if notebook is exposed on different port (default port is 8888 here); 
+                                                                # choose login1 or login2 node depending on where notebook is launched
+# Open the port on compute node while being on login node on Puhti
+
+ssh -l csc-username  -L 8888:localhost:8888 csc-username@r07c52  # where r07c52 is compute node
+```
+
+# Launch gromacs-notebook
+singularity exec -B /users/csc-username  gromacs-notebook-puhti.sif /docker_entry_points/notebook # you have to mount your home to work
+
 Open browser http://localhost:8888  and copy the token value generated after launching notebook. or copy and paste full path (i.e., http://localhost:8888/?token=tokenkey)
 If successful, gromacs-notebook should be visible.
