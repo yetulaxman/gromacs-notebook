@@ -1,3 +1,4 @@
+# This dockerfile is extended from the gromacs source codes: https://www.gromacs.org/
 FROM gmxapi/ci-mpich:latest
 
 RUN . $VENV/bin/activate && \
