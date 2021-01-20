@@ -37,7 +37,7 @@ ssh -l csc-username -L 8888:localhost:8888 puhti-login1.csc.fi  # change port nu
 Launch gromacs-notebook
 
 ```bash
-singularity exec -B /users/Puhti-username:/users/Puhti-username  gromacs.simg /docker_entry_points/notebook
+singularity exec -B /users/Puhti-username:/users/Puhti-username  gromacs-notebook-puhti.sif /docker_entry_points/notebook
 
 ```
 Open browser http://localhost:8888  and copy the token value generated after launching notebook. If successful, gromacs-notebook should be visible.
