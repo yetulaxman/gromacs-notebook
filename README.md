@@ -1,4 +1,4 @@
-# gromacs-notebook
+# gromacs-notebook (WIP)
 Porting gromacs-notebook in CSC environment
 
 
@@ -28,11 +28,11 @@ download singularity image from allas object storage
 
 ```
 
-Open the port on Puhti
+Open the port on Puhti (Just for testing purpose
 
 ```bash
 
-ssh -l yetukuri -L 8888:localhost:8888 puhti-login1.csc.fi  # change port number if notebook is exposed on different port (default port is 8888 here)
+ssh -l csc-username -L 8888:localhost:8888 puhti-login1.csc.fi  # change port number if notebook is exposed on different port (default port is 8888 here); choose login1 or login2 depending on where notebook is launched
 ```
 Launch gromacs-notebook
 
