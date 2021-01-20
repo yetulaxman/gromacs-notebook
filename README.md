@@ -25,6 +25,7 @@ sudo SINGULARITY_NOHTTPS=1 singularity build gromacs-notebook-puhti.sif deffile
 
 download singularity image from allas object storage
 wget https://a3s.fi/Gromacs_utilities/gromacs.tar.gz
+tar -xavf gromacs.tar.gz 
 ```
 
 Open the port on Puhti (Just for testing purpose
