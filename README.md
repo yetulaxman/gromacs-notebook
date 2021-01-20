@@ -40,4 +40,4 @@ Launch gromacs-notebook
 singularity exec -B /users/Puhti-username:/users/Puhti-username  gromacs.simg /docker_entry_points/notebook
 
 ```
-Open browser http://localhost:8888
+Open browser http://localhost:8888  and copy the token value generated after launching notebook. If successful, gromacs-notebook should be visible.
