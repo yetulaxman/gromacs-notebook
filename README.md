@@ -91,8 +91,6 @@ tar -xavf gromacs.tar.gz
 cd gromacs
 ```
 
-Launch gromacs-notebook in an interactive node
-
 Lanuch  batch job as below:
 
 ```bash
