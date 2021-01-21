@@ -41,7 +41,7 @@ Launch gromacs-notebook
 singularity exec -B /users/<username>  gromacs-notebook-puhti.sif /docker_entry_points/notebook
 
 ```
-Open browser at http://localhost:8888  on your local machine and the copy the token value generated after launching notebook. or simply, copy and paste full path (i.e., http://localhost:8888/?token=tokenkey). If successful, gromacs-notebook should appear in browser.
+Point your browser to http://localhost:8888  on your local machine and the copy the token value generated after launching notebook. or simply, copy and paste full path (i.e., http://localhost:8888/?token=tokenkey). If successful, gromacs-notebook should appear in browser.
 
 ### Deploying gromacs-notebook on Puhti in interactive node (Production)
 
@@ -77,7 +77,7 @@ ssh -l <username>  -L 8888:localhost:8888 <username>@$HOSTNAME      # Issue this
                                                                 
 ```
 
-Open browser http://localhost:8888  and copy the token value generated after launching notebook. or copy and paste full path (i.e., http://localhost:8888/?token=tokenkey). If successful, gromacs-notebook should be visible.
+Point your browser to http://localhost:8888  and copy the token value generated after launching notebook. or copy and paste full path (i.e., http://localhost:8888/?token=tokenkey). If successful, gromacs-notebook should be visible.
 
 
 ### Deploying gromacs-notebook on Puhti using batch job (Production)
@@ -117,7 +117,7 @@ ssh -l <username>  -L 8888:localhost:8888 <username>@$HOSTNAME      # Issue this
                                                                 
 ```
 
-Open browser http://localhost:8888  and copy the token value generated after launching notebook. or copy and paste full path (i.e., http://localhost:8888/?token=tokenkey). If successful, gromacs-notebook should be visible.
+Point your browser to http://localhost:8888  and copy the token value generated after launching notebook. or copy and paste full path (i.e., http://localhost:8888/?token=tokenkey). If successful, gromacs-notebook should be visible.
 
 
 
