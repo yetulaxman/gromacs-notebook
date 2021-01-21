@@ -32,7 +32,7 @@ Port rendering on Puhti
 
 Issue the following SSH command on local machine:
 ```bash
-ssh -l <username> -L 8888:localhost:8888 puhti-login1.csc.fi  # change port number if notebook is exposed on different port (default port is 8888 here); 
+ssh -l <username> -L 8888:localhost:8888 puhti-login1.csc.fi    # change port number if notebook is exposed on different port (default port is 8888 here); 
                                                                 # choose login1 or login2 node depending on where notebook is launched
 ```
 Launch gromacs-notebook
@@ -59,7 +59,7 @@ Launch gromacs-notebook in an interactive node
 Lanuch interactive session as below:
 
 ```bash
-# start interactive node as below and choose the project on prompt
+# start interactive node as below and choose your project name on prompt
 sinteractive -c 2 -m 4G -d 250
 
 # Launch notebook
@@ -112,7 +112,7 @@ ssh -l <username> -L 8888:localhost:8888 puhti-login1.csc.fi    # Issue this com
                                                                 # change port number if notebook is exposed on different port (default port is 8888 here); 
                                                                 # choose login1 or login2 node depending on where notebook is launched
                                                                                                                        
-ssh -l <username>  -L 8888:localhost:8888 <username>@$HOSTNAME      # Issue this command on login node; $HOSTNAME is compute node attached in batch job
+ssh -l <username>  -L 8888:localhost:8888 <username>@$HOSTNAME       # Issue this command on login node; $HOSTNAME is compute node attached in batch job
                                                                      # hostname  of compute node attached to batch job is available in slurm output file 
                                                                 
 ```
