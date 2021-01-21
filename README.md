@@ -56,7 +56,7 @@ cd gromacs
 
 Launch gromacs-notebook in an interactive node
 
-Lanuch interactive seesion as below:
+Lanuch interactive session as below:
 
 ```bash
 # start interactive node as below and choose the project on prompt
