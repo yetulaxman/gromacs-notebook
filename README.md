@@ -15,7 +15,7 @@ sudo docker push localhost:5000/gmxapi-notebook:puhti
 
 # Build singularity image from deffile
 
-sudo SINGULARITY_NOHTTPS=1 singularity build gromacs-notebook-puhti.sif deffile
+sudo SINGULARITY_NOHTTPS=1 singularity build gromacs-notebook-puhti.sif gromacs-notebook.deffile 
 
 ```
 
