@@ -149,14 +149,7 @@ RUN . $VENV/bin/activate && \
 #RUN git clone https://gitlab.com/gromacs/tutorials.git
 
 
+ADD notebook /docker_entry_points/
+
 # For the workshop, we will use Singularity, so Docker entry points are irrelevant.
-
-##!/bin/bash
-#
-#source /usr/local/gromacs/bin/GMXRC
-#source $VENV/bin/activate
-#jupyter notebook --ip=0.0.0.0 --no-browser  --NotebookApp.custom_display_url='http://localhost:8888/'
-
-#ADD --chown=testing:testing notebook /docker_entry_points
-#
 #CMD ["notebook"]
