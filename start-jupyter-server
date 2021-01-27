@@ -29,6 +29,7 @@ port=`echo $url | sed -e 's/.*host:\([0-9]*\).*/\1/'`
 
 # write out tunneling instructions 
 echo -e "
+    If you have set up ssh-key login to Puhti, do this:
     Copy/Paste this in your local terminal to ssh tunnel with remote
     -----------------------------------------------------------------
     Linux / macOS / MobaXTerm / Cmder:
@@ -42,9 +43,30 @@ echo -e "
     "
 
 echo -e "
-    Copy/Paste this URL into your browser
+    OR
+
+    If you haven't set up ssh-key based login to Puhti, do this:
+    Copy/Paste this in your local terminal to ssh tunnel with remote
+    NNNN = 5000 + the number in your training account i.e. unique to you.
+    -----------------------------------------------------------------
+    Linux / macOS / MobaXTerm / Cmder / Windows PowerShell:
+    ssh  -L NNNN:localhost:NNNN  username@puhti.csc.fi ssh -L NNNN:localhost:$port $USER@$NODENAME
+
+    PuTTy:
+    ssh -L NNNN:localhost:$port $USER@$NODENAME
+    Set Source ($port) and Destination (localhost:$port) in:
+    PuTTy -> Connection -> SSH -> Tunnels
+    -----------------------------------------------------------------
+    "
+
+nnnnurl=`echo $url | sed s/$port/NNNN/`
+echo -e "
+    Copy/Paste this URL into your browser (without ssh-key connection
+    replace the port below with the NNNN you used above).
     -----------------------------------------------------------------
     $url
+    or
+    $nnnnurl
     -----------------------------------------------------------------
     "
 
