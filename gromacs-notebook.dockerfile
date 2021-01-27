@@ -1,5 +1,10 @@
 # docker build -t gromacs/tutorial -f gromacs-notebook.dockerfile .
 #
+# Note the availability of the DOCKER_CORES build-arg when multiple CPUs are
+# available to docker on the build host (though changing the value will invalidate
+# cached build layers).
+# E.g. docker build -t gromacs/tutorial -f gromacs-notebook.dockerfile --build-arg DOCKER_CORES=4 .
+#
 # From https://gitlab.com/gromacs/gromacs/-/blob/master/python_packaging/docker/gromacs-dependencies.dockerfile
 
 FROM ubuntu:groovy as base
@@ -36,7 +41,7 @@ RUN apt-get update && \
 
 # GROMACS 2021
 # Adapted from https://gitlab.com/gromacs/gromacs/-/blob/master/python_packaging/docker/gromacs.dockerfile
-from base as gromacs
+from base as gromacs2021
 
 RUN wget ftp://ftp.gromacs.org/pub/gromacs/gromacs-2021-rc1.tar.gz && \
     tar xvf gromacs-2021-rc1.tar.gz
@@ -58,57 +63,20 @@ RUN cd gromacs-2021-rc1 && \
 # Switch to the user environment
 from base as userbase
 
-RUN groupadd -r tutorial && useradd -m -s /bin/bash -g tutorial tutorial
+ENV HOME /home/tutorial
+RUN groupadd -r tutorial && useradd -m -d $HOME -s /bin/bash -g tutorial tutorial
 
 # Switch from `root` to non-root user for the rest of the build and for default container execution.
 USER tutorial
 
-WORKDIR /home/tutorial
+WORKDIR $HOME
 
-ENV VENV /home/tutorial/venv
+ENV VENV $HOME/venv
 RUN python3 -m venv $VENV
 RUN . $VENV/bin/activate && \
     pip install --no-cache-dir --upgrade pip setuptools
 
-COPY --from=gromacs /usr/local/gromacs /usr/local/gromacs
-
-# Miniconda3
-# Locally cache the miniconda download.
-from userbase as conda
-
-RUN wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
-
-# Consider checking the checksum.
-RUN wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh && \
-    bash Miniconda3-latest-Linux-x86_64.sh -b -p $HOME/miniconda && \
-    rm Miniconda3-latest-Linux-x86_64.sh
-
-# Set up and build the user environment.
-from userbase as user
-
-##
-# Do we want the Conda stuff?
-##
-#COPY --from=conda --chown=tutorial:tutorial /home/tutorial/miniconda /home/tutorial/miniconda
-#
-#ENV CONDA /home/tutorial/miniconda/bin/conda
-#
-#RUN $CONDA update conda -y
-#
-#RUN . /home/tutorial/miniconda/bin/activate && $CONDA init bash
-#
-## Follow procedure from https://github.com/ENCCS/gromacs-workshop-installation
-## Maybe avoid graphical parts unless we plan to tunnel X or VNC
-##RUN $CONDA create --name gromacs-tutorials -c conda-forge -c bioconda nglview
-#RUN $CONDA create --name gromacs-tutorials -c conda-forge -c bioconda gromacs=2020.4 matplotlib notebook numpy requests pandas seaborn
-#
-#RUN bash -c "$CONDA activate gromacs-tutorials && \
-#    $CONDA install -c conda-forge compilers && \
-#    $CONDA install -c conda-forge openmpi && \
-#    $CONDA install -c conda-forge cmake && \
-#    $CONDA install -c conda-forge ocl-icd-system && \
-#    $CONDA install scikit-build "
-
+COPY --from=gromacs2021 /usr/local/gromacs /usr/local/gromacs
 
 RUN . $VENV/bin/activate && \
     pip install --no-cache-dir jupyter && \
@@ -121,33 +89,40 @@ RUN . $VENV/bin/activate && \
 
 # gmxapi
 # Adapted from https://gitlab.com/gromacs/gromacs/-/blob/master/python_packaging/docker/ci.dockerfile
-# TODO: If we aren't building from the GROMACS repository, then we should bump the version on pypi and use that.
-#RUN . $VENV/bin/activate && \
-#    . /usr/local/gromacs/bin/GMXRC && \
-#    pip install --no-cache-dir mpi4py scikit-build && \
-#    pip install gmxapi
+RUN . $VENV/bin/activate && \
+    . /usr/local/gromacs/bin/GMXRC && \
+    pip install --no-cache-dir mpi4py scikit-build && \
+    pip install --no-cache-dir --pre gmxapi
 
-# TODO: Test sample_restraint plugin code.
-#RUN . $VENV/bin/activate && \
-#    . /usr/local/gromacs/bin/GMXRC && \
-#    (cd $HOME/sample_restraint && \
-#     mkdir build && \
-#     cd build && \
-#     cmake .. \
-#             -DDOWNLOAD_GOOGLETEST=ON \
-#             -DGMXAPI_EXTENSION_DOWNLOAD_PYBIND=ON && \
-#     make -j4 && \
-#     make test && \
-#     make install \
-#    )
+
+# Set up and build the user environment.
+from userbase as sample_restraint
+
+COPY --from=gromacs2021 --chown=tutorial:tutorial /gromacs-2021-rc1/python_packaging/sample_restraint $HOME/sample_restraint
+
+RUN . $VENV/bin/activate && \
+    . /usr/local/gromacs/bin/GMXRC && \
+    (cd $HOME/sample_restraint && \
+     mkdir build && \
+     cd build && \
+     cmake .. \
+             -DDOWNLOAD_GOOGLETEST=ON \
+             -DGMXAPI_EXTENSION_DOWNLOAD_PYBIND=ON && \
+     make -j4 && \
+     make test && \
+     make install \
+    )
+
+from userbase as user
+
+COPY --from=sample_restraint --chown=tutorial:tutorial $VENV $VENV
 
 # From https://gitlab.com/gromacs/gromacs/-/blob/master/python_packaging/docker/notebook.dockerfile
 
-#FROM user
-
-# The tutorials repository is not public. We can build this docker image from the tutorials repository or choose another way to get the files.
-#RUN git clone https://gitlab.com/gromacs/tutorials.git
-
+# The tutorials repository is not public. Since we are building a Singularity
+# SIF from this Docker image, we will not include additional content,
+# and we need to separately arrange for users to
+#     git clone https://gitlab.com/gromacs/tutorials.git
 
 ADD notebook /docker_entry_points/
 
