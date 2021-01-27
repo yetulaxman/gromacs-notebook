@@ -50,7 +50,7 @@ echo -e "
     NNNN = 5000 + the number in your training account i.e. unique to you.
     -----------------------------------------------------------------
     Linux / macOS / MobaXTerm / Cmder / Windows PowerShell:
-    ssh  -L NNNN:localhost:NNNN  username@puhti.csc.fi ssh -L NNNN:localhost:$port $USER@$NODENAME
+    ssh  -L NNNN:localhost:NNNN  $USER@puhti.csc.fi ssh -L NNNN:localhost:$port $USER@$NODENAME
 
     PuTTy:
     ssh -L NNNN:localhost:$port $USER@$NODENAME
