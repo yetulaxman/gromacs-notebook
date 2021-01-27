@@ -72,43 +72,8 @@ RUN . $VENV/bin/activate && \
 
 COPY --from=gromacs /usr/local/gromacs /usr/local/gromacs
 
-# Miniconda3
-# Locally cache the miniconda download.
-from userbase as conda
-
-RUN wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
-
-# Consider checking the checksum.
-RUN wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh && \
-    bash Miniconda3-latest-Linux-x86_64.sh -b -p $HOME/miniconda && \
-    rm Miniconda3-latest-Linux-x86_64.sh
-
 # Set up and build the user environment.
 from userbase as user
-
-##
-# Do we want the Conda stuff?
-##
-#COPY --from=conda --chown=tutorial:tutorial /home/tutorial/miniconda /home/tutorial/miniconda
-#
-#ENV CONDA /home/tutorial/miniconda/bin/conda
-#
-#RUN $CONDA update conda -y
-#
-#RUN . /home/tutorial/miniconda/bin/activate && $CONDA init bash
-#
-## Follow procedure from https://github.com/ENCCS/gromacs-workshop-installation
-## Maybe avoid graphical parts unless we plan to tunnel X or VNC
-##RUN $CONDA create --name gromacs-tutorials -c conda-forge -c bioconda nglview
-#RUN $CONDA create --name gromacs-tutorials -c conda-forge -c bioconda gromacs=2020.4 matplotlib notebook numpy requests pandas seaborn
-#
-#RUN bash -c "$CONDA activate gromacs-tutorials && \
-#    $CONDA install -c conda-forge compilers && \
-#    $CONDA install -c conda-forge openmpi && \
-#    $CONDA install -c conda-forge cmake && \
-#    $CONDA install -c conda-forge ocl-icd-system && \
-#    $CONDA install scikit-build "
-
 
 RUN . $VENV/bin/activate && \
     pip install --no-cache-dir jupyter && \
