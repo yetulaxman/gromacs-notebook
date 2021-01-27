@@ -1,0 +1,68 @@
+#!/bin/bash
+
+# Start a Jupyter notebook server and write out instructions
+# for ssh port forwarding
+# Note: it is assumed that the port where notebook server is started
+# is available in the local machine
+
+# Make sure script is run within a slurm job
+if [ -z "$SLURM_JOB_ID" ]
+then
+    echo "Jupyter notebook server can be started only in compute nodes"
+    echo "Execute ${0##*/} in interactive session or in batch job script"
+    echo "See docs.csc.fi/... for more details"
+    exit 1
+fi
+
+
+# Check for Jupyter
+if ! [ -x "$(command -v jupyter)" ]; then
+  echo "Jupyter is not available"
+  echo "Please load a module including Jupyter environment such as"
+  echo "python-env, python-data, tensorflow, ..."
+  exit 1
+fi
+
+# set an env variable, find hostname of compute node
+XDG_RUNTIME_DIR=""
+NODENAME=$(hostname)
+
+
+#start notebook server and redirect stderr
+jupyter notebook --no-browser 2> jupyter.$SLURM_JOB_ID.out &
+pid=$!
+
+# find url with token and port for ssh forwarding
+# the while loop ensures that the server has been started
+url=""
+while [ -z "$url" ]
+do
+    sleep 3
+    url=`jupyter notebook list | sed -n 's/\(http.*\) ::.*/\1/p'`
+done
+port=`echo $url | sed -e 's/.*host:\([0-9]*\).*/\1/'`
+
+# write out tunneling instructions 
+echo -e "
+    Copy/Paste this in your local terminal to ssh tunnel with remote
+    -----------------------------------------------------------------
+    Linux / macOS / MobaXTerm / Cmder:
+    ssh -N -L $port:localhost:$port -J $USER@puhti.csc.fi $USER@$NODENAME
+
+    PuTTy:
+    ssh -N -L $port:localhost:$port $USER@$NODENAME
+    Set Source ($port) and Destination (localhost:$port) in:
+    PuTTy -> Connection -> SSH -> Tunnels
+    -----------------------------------------------------------------
+    "
+
+echo -e "
+    Copy/Paste this URL into your browser
+    -----------------------------------------------------------------
+    $url
+    -----------------------------------------------------------------
+    "
+
+# Trap CTRL-C and wait for the server
+trap "kill -1 $pid" SIGINT
+wait $pid

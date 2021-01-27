@@ -2,3 +2,11 @@ Bootstrap: docker
 Registry: http://localhost:5000
 Namespace:
 From:gmxapi-notebook:puhti
+
+%setup
+    mkdir -p $SINGULARITY_ROOTFS/opt/bin/
+    cp start-jupyter-server $SINGULARITY_ROOTFS/opt/bin/
+    chmod a+xr $SINGULARITY_ROOTFS/opt/bin/start-jupyter-server
+
+%runscript
+    exec /opt/bin/start-jupyter-server
