@@ -5,23 +5,8 @@
 # Note: it is assumed that the port where notebook server is started
 # is available in the local machine
 
-# Make sure script is run within a slurm job
-if [ -z "$SLURM_JOB_ID" ]
-then
-    echo "Jupyter notebook server can be started only in compute nodes"
-    echo "Execute ${0##*/} in interactive session or in batch job script"
-    echo "See docs.csc.fi/... for more details"
-    exit 1
-fi
-
-
-# Check for Jupyter
-if ! [ -x "$(command -v jupyter)" ]; then
-  echo "Jupyter is not available"
-  echo "Please load a module including Jupyter environment such as"
-  echo "python-env, python-data, tensorflow, ..."
-  exit 1
-fi
+source /usr/local/gromacs/bin/GMXRC
+source $VENV/bin/activate
 
 # set an env variable, find hostname of compute node
 XDG_RUNTIME_DIR=""
