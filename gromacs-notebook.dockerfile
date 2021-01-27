@@ -1,5 +1,10 @@
 # docker build -t gromacs/tutorial -f gromacs-notebook.dockerfile .
 #
+# Note the availability of the DOCKER_CORES build-arg when multiple CPUs are
+# available to docker on the build host (though changing the value will invalidate
+# cached build layers).
+# E.g. docker build -t gromacs/tutorial -f gromacs-notebook.dockerfile --build-arg DOCKER_CORES=4 .
+#
 # From https://gitlab.com/gromacs/gromacs/-/blob/master/python_packaging/docker/gromacs-dependencies.dockerfile
 
 FROM ubuntu:groovy as base
@@ -86,11 +91,10 @@ RUN . $VENV/bin/activate && \
 
 # gmxapi
 # Adapted from https://gitlab.com/gromacs/gromacs/-/blob/master/python_packaging/docker/ci.dockerfile
-# TODO: If we aren't building from the GROMACS repository, then we should bump the version on pypi and use that.
-#RUN . $VENV/bin/activate && \
-#    . /usr/local/gromacs/bin/GMXRC && \
-#    pip install --no-cache-dir mpi4py scikit-build && \
-#    pip install gmxapi
+RUN . $VENV/bin/activate && \
+    . /usr/local/gromacs/bin/GMXRC && \
+    pip install --no-cache-dir mpi4py scikit-build && \
+    pip install --pre gmxapi
 
 # TODO: Test sample_restraint plugin code.
 #RUN . $VENV/bin/activate && \
