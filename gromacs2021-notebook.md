@@ -40,7 +40,7 @@ sinteractive -c 2 -m 4G -d 250
 singularity run -B /users/$USER:/home/tutorial/.local -B $PWD  gromacs2021-notebook-puhti.sif
 
 ```
-Above command will start the server, and it will then print out a web address and a ssh command. Execute the ssh command (copy-paste) in another linux terminal on your local machine to form a tunnel between your machine and the compute node. 
+Above command will start Jupyter server, and it will then print out a web address and a ssh command. Execute the ssh command (copy-paste) in another linux (or powershell) terminal  on your local machine to form a tunnel between your machine and the compute node.
 
 
 ### open url in browser on your local machine 
