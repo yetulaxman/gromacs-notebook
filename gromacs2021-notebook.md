@@ -16,7 +16,7 @@ sudo SINGULARITY_NOHTTPS=1 singularity build gromacs2021-notebook-puhti.sif grom
 ```
 
 
-### Deploying gromacs2021-notebook on Puhti as an interactive job (Production)
+### Deploying gromacs2021-notebook on Puhti as an interactive job 
 
 ### Download singularity image from allas object storage as before
 
