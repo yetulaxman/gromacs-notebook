@@ -29,6 +29,8 @@ port=`echo $url | sed -e 's/.*host:\([0-9]*\).*/\1/'`
 
 # write out tunneling instructions 
 echo -e "
+    Execute the the following ssh command (copy-paste) in another terminal on your local machine
+    
     If you have set up ssh-key login to Puhti, do this:
     Copy/Paste this in your local terminal to ssh tunnel with remote
     -----------------------------------------------------------------
