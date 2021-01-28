@@ -16,9 +16,9 @@ sudo SINGULARITY_NOHTTPS=1 singularity build gromacs2021-notebook-puhti.sif grom
 ```
 
 
-### Deploying gromacs2021-notebook on Puhti as an interactive job 
+## Deploying gromacs2021-notebook on Puhti as an interactive job 
 
-### Download singularity image from allas object storage as before
+### Download singularity image from allas object storage as below
 
 ```bash
 # Download singularity image from allas object storage
@@ -44,6 +44,6 @@ Above command will start Jupyter server, and it will then print out a web addres
 
 
 ### open url in browser on your local machine 
-Copy and paste full URL path (i.e., http://localhost:PORT/?token=tokenkey). If successful, gromacs-notebook should be visible inside 
+Copy and paste full URL path (i.e., http://localhost:PORT/?token=tokenkey). If successful, gromacs-notebook should be visible in your local browser
 
  
