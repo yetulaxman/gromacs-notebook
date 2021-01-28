@@ -13,7 +13,7 @@ cd gromacs_2021
 
 ### Launch gromacs2021-notebook in an interactive node
 
-Lanuch interactive session as below:
+Launch interactive session as below:
 
 ```bash
 # start interactive node as below and choose your project name on prompt
