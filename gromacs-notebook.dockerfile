@@ -5,6 +5,10 @@
 # cached build layers).
 # E.g. docker build -t gromacs/tutorial -f gromacs-notebook.dockerfile --build-arg DOCKER_CORES=4 .
 #
+# If running this container with Docker (instead of just using as the basis for a Singularity container),
+# the /docker_entry_points/notebook entry point script can be used to launch a Jupyter notebook server.
+#     docker run --rm -ti -p 8888:8888 gromacs/tutorial /docker_entry_points/notebook
+#
 # From https://gitlab.com/gromacs/gromacs/-/blob/master/python_packaging/docker/gromacs-dependencies.dockerfile
 
 FROM ubuntu:groovy as base
@@ -63,15 +67,15 @@ RUN cd gromacs-2021-rc1 && \
 # Switch to the user environment
 from base as userbase
 
-ENV HOME /home/tutorial
-RUN groupadd -r tutorial && useradd -m -d $HOME -s /bin/bash -g tutorial tutorial
+ENV TUTORIAL /home/tutorial
+RUN groupadd -r tutorial && useradd -m -d $TUTORIAL -s /bin/bash -g tutorial tutorial
 
 # Switch from `root` to non-root user for the rest of the build and for default container execution.
 USER tutorial
 
-WORKDIR $HOME
+WORKDIR $TUTORIAL
 
-ENV VENV $HOME/venv
+ENV VENV $TUTORIAL/venv
 RUN python3 -m venv $VENV
 RUN . $VENV/bin/activate && \
     pip install --no-cache-dir --upgrade pip setuptools
@@ -98,11 +102,11 @@ RUN . $VENV/bin/activate && \
 # Set up and build the user environment.
 from userbase as sample_restraint
 
-COPY --from=gromacs2021 --chown=tutorial:tutorial /gromacs-2021-rc1/python_packaging/sample_restraint $HOME/sample_restraint
+COPY --from=gromacs2021 --chown=tutorial:tutorial /gromacs-2021-rc1/python_packaging/sample_restraint $TUTORIAL/sample_restraint
 
 RUN . $VENV/bin/activate && \
     . /usr/local/gromacs/bin/GMXRC && \
-    (cd $HOME/sample_restraint && \
+    (cd $TUTORIAL/sample_restraint && \
      mkdir build && \
      cd build && \
      cmake .. \
