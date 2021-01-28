@@ -35,27 +35,14 @@ echo -e "
     Linux / macOS / MobaXTerm / Cmder:
     ssh -N -L $port:localhost:$port -J $USER@puhti.csc.fi $USER@$NODENAME
 
-    PuTTy:
-    ssh -N -L $port:localhost:$port $USER@$NODENAME
-    Set Source ($port) and Destination (localhost:$port) in:
-    PuTTy -> Connection -> SSH -> Tunnels
-    -----------------------------------------------------------------
-    "
-
-echo -e "
     OR
 
     If you haven't set up ssh-key based login to Puhti, do this:
-    Copy/Paste this in your local terminal to ssh tunnel with remote
-    NNNN = 5000 + the number in your training account i.e. unique to you.
+    Copy/Paste this in your local terminal but replace NNNN as follows
+    NNNN -> 5000 + the number in your training account i.e. unique to you.
     -----------------------------------------------------------------
     Linux / macOS / MobaXTerm / Cmder / Windows PowerShell:
     ssh  -L NNNN:localhost:NNNN  $USER@puhti.csc.fi ssh -L NNNN:localhost:$port $USER@$NODENAME
-
-    PuTTy:
-    ssh -L NNNN:localhost:$port $USER@$NODENAME
-    Set Source ($port) and Destination (localhost:$port) in:
-    PuTTy -> Connection -> SSH -> Tunnels
     -----------------------------------------------------------------
     "
 
@@ -65,7 +52,7 @@ echo -e "
     replace the port below with the NNNN you used above).
     -----------------------------------------------------------------
     $url
-    or
+    OR
     $nnnnurl
     -----------------------------------------------------------------
     "
