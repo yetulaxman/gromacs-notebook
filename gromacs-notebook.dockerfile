@@ -47,14 +47,14 @@ RUN apt-get update && \
 # Adapted from https://gitlab.com/gromacs/gromacs/-/blob/master/python_packaging/docker/gromacs.dockerfile
 from base as gromacs2021
 
-RUN wget ftp://ftp.gromacs.org/pub/gromacs/gromacs-2021-rc1.tar.gz && \
-    tar xvf gromacs-2021-rc1.tar.gz
+RUN wget ftp://ftp.gromacs.org/pub/gromacs/gromacs-2021.tar.gz && \
+    tar xvf gromacs-2021.tar.gz
 
 ARG DOCKER_CORES=1
 
 ARG TYPE=Release
 
-RUN cd gromacs-2021-rc1 && \
+RUN cd gromacs-2021 && \
     mkdir build && \
     cd build && \
     cmake .. \
@@ -96,13 +96,13 @@ RUN . $VENV/bin/activate && \
 RUN . $VENV/bin/activate && \
     . /usr/local/gromacs/bin/GMXRC && \
     pip install --no-cache-dir mpi4py scikit-build && \
-    pip install --no-cache-dir --pre gmxapi
+    pip install --no-cache-dir gmxapi
 
 
 # Set up and build the user environment.
 from userbase as sample_restraint
 
-COPY --from=gromacs2021 --chown=tutorial:tutorial /gromacs-2021-rc1/python_packaging/sample_restraint $TUTORIAL/sample_restraint
+COPY --from=gromacs2021 --chown=tutorial:tutorial /gromacs-2021/python_packaging/sample_restraint $TUTORIAL/sample_restraint
 
 RUN . $VENV/bin/activate && \
     . /usr/local/gromacs/bin/GMXRC && \
