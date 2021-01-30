@@ -25,7 +25,7 @@ singularity run -B /users/$USER  gromacs2021-notebook-cscpuhti.sif (for post-tun
    
    or 
    
-LOCAL_PORT=5007 singularity run -B /users/$USER  gromacs2021-notebook-cscpuhti.sif (for post-tunnel settings) (for pre-tunnel settings)
+LOCAL_PORT=5007 singularity run -B /users/$USER  gromacs2021-notebook-cscpuhti.sif (for post-tunnel settings) (for pre-tunnel settings using env variable, LOCAL_PORT)
 
 ```
 Above command will start Jupyter server, and then it will print out instructions for a web address and a ssh command. Execute the ssh commands (copy-paste) as instructed to form a tunnel between your machine and the compute node.
