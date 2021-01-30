@@ -12,6 +12,11 @@ source $VENV/bin/activate
 XDG_RUNTIME_DIR=""
 NODENAME=$(hostname)
 
+#LOCAL_PORT=""
+
+#if [ -z "$LOCAL_PORT" ]; then
+#    LOCAL_PORT="NNNN"
+#fi
 
 #start notebook server and redirect stderr
 jupyter notebook --no-browser 2> jupyter.$SLURM_JOB_ID.out &
@@ -29,47 +34,41 @@ port=`echo $url | sed -e 's/.*host:\([0-9]*\).*/\1/'`
 
 # write out tunneling instructions 
 echo -e "
+    Execute the following ssh command (copy-paste) in another terminal on your local machine to set up ssh tunnel with remote:
+          
     If you have set up ssh-key login to Puhti, do this:
-    Copy/Paste this in your local terminal to ssh tunnel with remote
-    -----------------------------------------------------------------
+    -----------------------------------------------------------------------------------------------------------
     Linux / macOS / MobaXTerm / Cmder:
-    ssh -N -L $port:localhost:$port -J $USER@puhti.csc.fi $USER@$NODENAME
-
-    PuTTy:
-    ssh -N -L $port:localhost:$port $USER@$NODENAME
-    Set Source ($port) and Destination (localhost:$port) in:
-    PuTTy -> Connection -> SSH -> Tunnels
-    -----------------------------------------------------------------
-    "
-
-echo -e "
-    OR
-
-    If you haven't set up ssh-key based login to Puhti, do this:
-    Copy/Paste this in your local terminal to ssh tunnel with remote
-    NNNN = 5000 + the number in your training account i.e. unique to you.
-    -----------------------------------------------------------------
+    ssh -N -L $port:localhost:$port -J $USER@puhti.csc.fi $USER@$NODENAME (Copy/Paste this in your local terminal)
+    $url (Copy/Paste this URL into your browser)
+    ------------------------------------------------------------------------------------------------------------
+    " 
+ if [ -z "$LOCAL_PORT" ]; then
+    LOCAL_PORT="NNNN"
+    nnnnurl=`echo $url | sed s/$port/$LOCAL_PORT/`
+    NODENAME=`echo $NODENAME | sed s/.bullx//`
+echo -e "    If you haven't set up ssh-key based login to Puhti, do this:
+    Replace NNNN as follows: NNNN -> 5000 + the number in your training account i.e. unique to you.
+    --------------------------------------------------------------------------------------------------------------
     Linux / macOS / MobaXTerm / Cmder / Windows PowerShell:
-    ssh  -L NNNN:localhost:NNNN  $USER@puhti.csc.fi ssh -L NNNN:localhost:$port $USER@$NODENAME
-
-    PuTTy:
-    ssh -L NNNN:localhost:$port $USER@$NODENAME
-    Set Source ($port) and Destination (localhost:$port) in:
-    PuTTy -> Connection -> SSH -> Tunnels
-    -----------------------------------------------------------------
+    ssh  -L $LOCAL_PORT:localhost:$LOCAL_PORT  $USER@puhti.csc.fi ssh -L $LOCAL_PORT:localhost:$port $USER@$NODENAME (Copy/Paste this in your local terminal)
+    $nnnnurl ( Copy/Paste this URL into your browser)
+    --------------------------------------------------------------------------------------------------------------
     "
-
-nnnnurl=`echo $url | sed s/$port/NNNN/`
-echo -e "
-    Copy/Paste this URL into your browser (without ssh-key connection
-    replace the port below with the NNNN you used above).
-    -----------------------------------------------------------------
-    $url
-    or
-    $nnnnurl
-    -----------------------------------------------------------------
-    "
+ else
+    nnnnurl=`echo $url | sed s/$port/$LOCAL_PORT/`
+    NODENAME=`echo $NODENAME | sed s/.bullx//`
+   echo -e "    If you haven't set up ssh-key based login to Puhti, do this:
+    --------------------------------------------------------------------------------------------------------------
+    Linux / macOS / MobaXTerm / Cmder / Windows PowerShell:
+    ssh  -L $LOCAL_PORT:localhost:$LOCAL_PORT  $USER@puhti.csc.fi (Copy/Paste this in your local terminal)
+    ssh -L $LOCAL_PORT:localhost:$port $USER@$NODENAME (Copy/Paste this in your login node)
+    $nnnnurl (Copy/Paste this URL into your browser) 
+    --------------------------------------------------------------------------------------------------------------
+   "
+ fi
 
 # Trap CTRL-C and wait for the server
 trap "kill -1 $pid" SIGINT
 wait $pid
+
