@@ -60,6 +60,7 @@ RUN cd gromacs-2021 && \
     cmake .. \
         -DCMAKE_INSTALL_PREFIX=/usr/local/gromacs \
         -DGMX_THREAD_MPI=ON \
+        -DGMX_USE_RDTSCP=OFF \
         -DCMAKE_BUILD_TYPE=$TYPE && \
     make -j$DOCKER_CORES && \
     make -j$DOCKER_CORES install
