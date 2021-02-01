@@ -1,9 +1,9 @@
-# docker build -t gromacs/tutorial -f gromacs-notebook.dockerfile .
+# docker build -t gromacs/tutorial -f gromacs2021.dockerfile ..
 #
 # Note the availability of the DOCKER_CORES build-arg when multiple CPUs are
 # available to docker on the build host (though changing the value will invalidate
 # cached build layers).
-# E.g. docker build -t gromacs/tutorial -f gromacs-notebook.dockerfile --build-arg DOCKER_CORES=4 .
+# E.g. docker build -t gromacs/tutorial -f gromacs2021.dockerfile --build-arg DOCKER_CORES=4 ..
 #
 # If running this container with Docker (instead of just using as the basis for a Singularity container),
 # the /docker_entry_points/notebook entry point script can be used to launch a Jupyter notebook server.
@@ -98,6 +98,9 @@ RUN . $VENV/bin/activate && \
     pip install --no-cache-dir mpi4py scikit-build && \
     pip install --no-cache-dir gmxapi
 
+# Enable auto-completion for interfaces like Jupyter notebooks.
+RUN . $VENV/bin/activate && \
+    pip install --no-cache-dir "jedi!=0.18.0"
 
 # Set up and build the user environment.
 from userbase as sample_restraint
@@ -123,12 +126,6 @@ COPY --from=sample_restraint --chown=tutorial:tutorial $VENV $VENV
 
 # From https://gitlab.com/gromacs/gromacs/-/blob/master/python_packaging/docker/notebook.dockerfile
 
-# The tutorials repository is not public. Since we are building a Singularity
-# SIF from this Docker image, we will not include additional content,
-# and we need to separately arrange for users to
-#     git clone https://gitlab.com/gromacs/tutorials.git
+ADD docker/notebook /docker_entry_points/
 
-ADD notebook /docker_entry_points/
-
-# For the workshop, we will use Singularity, so Docker entry points are irrelevant.
-#CMD ["notebook"]
+CMD ["/docker_entry_points/notebook"]
