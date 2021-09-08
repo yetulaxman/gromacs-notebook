@@ -43,6 +43,47 @@ RUN apt-get update && \
          libopenmpi-dev && \
     rm -rf /var/lib/apt/lists/*
 
+# xfce
+RUN apt-get update && \
+    apt-get -yqf install && \
+    DEBIAN_FRONTEND=noninteractive apt-get -yq install \
+        xfce4 \
+        curl \
+        locales \
+        tcsh && \
+    locale-gen en_US.UTF-8 && \
+    rm -rf /var/lib/apt/lists/*
+
+# TurboVNC + NoVNC
+RUN wget https://sourceforge.net/projects/turbovnc/files/2.2.6/turbovnc_2.2.6_amd64.deb && \
+    dpkg --force-depends -i turbovnc_2.2.6_amd64.deb && \
+    rm turbovnc_2.2.6_amd64.deb && \
+    curl -fsSL https://deb.nodesource.com/setup_14.x | bash - && \
+    apt-get install -yq \
+      nodejs \
+      python3-numpy && \
+    apt-get install -f && \
+    rm -rf /var/lib/apt/lists/* && \
+    mkdir -p /opt/novnc && \
+    cd /opt/novnc && \
+    git clone https://github.com/novnc/noVNC.git . && \
+    npm install && \
+    mkdir -p /opt/novnc/utils/websockify && \
+    wget https://github.com/novnc/websockify/archive/master.tar.gz -q -O - | tar xzf - -C /opt/novnc/utils/websockify --strip-components=1
+
+ENV PATH="/opt/TurboVNC/bin:$PATH"
+
+# VMD
+#from base as vmd
+RUN wget https://www.ks.uiuc.edu/Research/vmd/vmd-1.9.3/files/final/vmd-1.9.3.bin.LINUXAMD64-CUDA8-OptiX4-OSPRay111p1.opengl.tar.gz && \
+    tar xvf vmd-1.9.3.bin.LINUXAMD64-CUDA8-OptiX4-OSPRay111p1.opengl.tar.gz && \
+    rm vmd-1.9.3.bin.LINUXAMD64-CUDA8-OptiX4-OSPRay111p1.opengl.tar.gz
+
+RUN cd vmd-1.9.3 && \
+    ./configure && \
+    cd src && \
+    make install
+
 # GROMACS 2021
 # Adapted from https://gitlab.com/gromacs/gromacs/-/blob/master/python_packaging/docker/gromacs.dockerfile
 from base as gromacs2021
@@ -126,7 +167,8 @@ from userbase as user
 COPY --from=sample_restraint --chown=tutorial:tutorial $VENV $VENV
 
 # From https://gitlab.com/gromacs/gromacs/-/blob/master/python_packaging/docker/notebook.dockerfile
-
-ADD docker/notebook /docker_entry_points/
+ADD notebook /docker_entry_points/
+ADD vnc /docker_entry_points/
+ADD xstartup.turbovnc $TUTORIAL/
 
 CMD ["/docker_entry_points/notebook"]

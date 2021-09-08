@@ -1,0 +1,46 @@
+#!/bin/bash
+
+unset SESSION_MANAGER
+unset DBUS_SESSION_BUS_ADDRESS
+XDG_SESSION_TYPE=x11;  export XDG_SESSION_TYPE
+
+OS=`uname -s`
+
+USESTARTUP=0
+echo "No window manager startup script found.  Use the TVNC_WM environment"
+echo "variable to specify the path to a window manager startup script or"
+echo "executable.  Falling back to TWM."
+which ls >/dev/null && {
+  if [ -f $HOME/.Xresources ]; then xrdb $HOME/.Xresources; fi
+  
+  # Remove any preconfigured monitors
+  if [[ -f "${HOME}/.config/monitors.xml" ]]; then
+    mv "${HOME}/.config/monitors.xml" "${HOME}/.config/monitors.xml.bak"
+  fi
+
+  # Copy over default panel if doesn't exist, otherwise it will prompt the user
+  PANEL_CONFIG="${HOME}/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-panel.xml"
+  if [[ ! -e "${PANEL_CONFIG}" ]]; then
+    mkdir -p "$(dirname "${PANEL_CONFIG}")"
+    cp "/etc/xdg/xfce4/panel/default.xml" "${PANEL_CONFIG}"
+  fi
+
+  # Disable useless services on autostart
+  AUTOSTART="${HOME}/.config/autostart"
+  rm -fr "${AUTOSTART}"    # clean up previous autostarts
+  mkdir -p "${AUTOSTART}"
+  for service in "pulseaudio" "rhsm-icon" "spice-vdagent" "tracker-extract" "tracker-miner-apps" "tracker-miner-user-guides" "xfce4-power-manager" "xfce-polkit"; do
+    echo -e "[Desktop Entry]\nHidden=true" > "${AUTOSTART}/${service}.desktop"
+  done
+
+  # launch dbus first through eval becuase it can conflict with a conda environment
+  # see https://github.com/OSC/ondemand/issues/700
+  eval $(dbus-launch --sh-syntax)
+
+  xsetroot -solid grey
+  xfce4-session
+} || {
+  echo "TWM not found.  I give up."
+  exit 1
+}
+

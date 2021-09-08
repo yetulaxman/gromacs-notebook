@@ -1,0 +1,31 @@
+#!/bin/bash
+
+export XDG_RUNTIME_DIR="$TMPDIR/xdg_runtime"
+mkdir -p "$XDG_RUNTIME_DIR"
+
+create_passwd () {
+  tr -cd 'a-zA-Z0-9' < /dev/urandom 2> /dev/null | head -c${1:-8}
+}
+export -f create_passwd
+
+password=$(create_passwd)
+echo "$password"
+(
+  umask 077
+  echo -ne "${password}\\n${password}" | vncpasswd -f > "$HOME/.vnc/passwd"
+)
+
+VNC_OUT=$(vncserver -rfbauth "$HOME/.vnc/passwd" -nohttpd -xstartup "$TUTORIAL/xstartup.turbovnc" 2>&1)
+VNC_PID=$(pgrep -s 0 Xvnc)
+echo ${VNC_OUT}
+
+display=$(echo "${VNC_OUT}" | awk -F':' '/^Desktop/{print $NF}')
+port=$((5900+display))
+/opt/novnc/utils/novnc_proxy --vnc "localhost:$port" &
+pid=$!
+
+echo "VNC password: $password"
+
+# Trap CTRL-C and wait for the server
+trap "kill -1 $pid;kill -1 $VNC_PID" SIGINT
+wait $pid
