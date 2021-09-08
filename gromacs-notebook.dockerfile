@@ -54,6 +54,9 @@ RUN apt-get update && \
     locale-gen en_US.UTF-8 && \
     rm -rf /var/lib/apt/lists/*
 
+ENV LANG en_US.UTF-8
+ENV LC_ALL en_US.UTF-8
+
 # TurboVNC + NoVNC
 RUN wget https://sourceforge.net/projects/turbovnc/files/2.2.6/turbovnc_2.2.6_amd64.deb && \
     dpkg --force-depends -i turbovnc_2.2.6_amd64.deb && \
