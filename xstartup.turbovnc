@@ -27,6 +27,7 @@ which ls >/dev/null && {
 
   mkdir -p "$HOME/Desktop"
   cp "/usr/share/applications/vmd.desktop" "$HOME/Desktop/"
+  chmod +x "$HOME/Desktop/vmd.desktop"
 
   # Disable useless services on autostart
   AUTOSTART="${HOME}/.config/autostart"
