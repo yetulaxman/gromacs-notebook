@@ -50,7 +50,8 @@ RUN apt-get update && \
         xfce4 \
         curl \
         locales \
-        tcsh && \
+        tcsh \
+        firefox && \
     locale-gen en_US.UTF-8 && \
     rm -rf /var/lib/apt/lists/*
 
@@ -86,6 +87,16 @@ RUN cd vmd-1.9.3 && \
     ./configure && \
     cd src && \
     make install
+
+RUN echo '[Desktop Entry] \n\
+Encoding=UTF-8\n\
+Version=1.9.3\n\
+Type=Application\n\
+Name=VMD\n\
+Terminal=true\n\
+Exec=vmd\
+' >> "/usr/share/applications/vmd.desktop" && \
+    update-desktop-database
 
 # GROMACS 2021
 # Adapted from https://gitlab.com/gromacs/gromacs/-/blob/master/python_packaging/docker/gromacs.dockerfile
