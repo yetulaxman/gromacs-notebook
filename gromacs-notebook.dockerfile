@@ -180,6 +180,10 @@ from userbase as user
 
 COPY --from=sample_restraint --chown=tutorial:tutorial $VENV $VENV
 
+RUN mkdir -p "$TUTORIAL/Desktop" && \
+    cp "/usr/share/applications/vmd.desktop" "$TUTORIAL/Desktop" && \
+    chmod +x "$TUTORIAL/Desktop"
+
 # From https://gitlab.com/gromacs/gromacs/-/blob/master/python_packaging/docker/notebook.dockerfile
 ADD notebook /docker_entry_points/
 ADD vnc /docker_entry_points/
