@@ -52,8 +52,8 @@ Set-up SSH port tunnels by opening a terminal on your local computer by copy pas
 
 ```bash
 
-ssh  -L NNNN:localhost:NNNN  CSCUSERNAME@puhti.csc.fi ssh -L NNNN:localhost:8888 yetukuri@hostname
-(e.g., with some portnumber=5042, above command: ssh -L 5042:localhost:5042 yetukuri@puhti.csc.fi ssh -L 5042:localhost:6080 yetukuri@r07c49) 
+ssh  -L NNNN:localhost:NNNN  CSCUSERNAME@puhti.csc.fi ssh -L NNNN:localhost:8888 CSCUSERNAME@hostname
+(e.g., with some portnumber=5042, above command: ssh -L 5042:localhost:5042 CSCUSERNAME@puhti.csc.fi ssh -L 5042:localhost:6080 CSCUSERNAME@r07c49) 
                                                                 
 ```
 ***Note**: Make sure to use different portnumber by each user
