@@ -3,7 +3,7 @@
 Computational environment  for FEBS course at CSC supercomputer (Puhti) can be accessed using the following two approaches:
 
 - [Method 1: Access VMD and Gromacs Jupyter notebook *via* Open OnDemand (OoD) tools](#Access-VMD-and-Gromacs-Jupyter-notebook-via-Open-OnDemand-OoD-tools)
-- [Method 2: Access nVNC+VMD and Gromacs Jupyter notebook *via* SSH tunneling](#Access-VMD-and-Gromacs-Jupyter-notebook-via-SSH-tunneling)
+- [Method 2: Access noVNC+VMD and Gromacs Jupyter notebook *via* SSH tunneling](#Access-VMD-and-Gromacs-Jupyter-notebook-via-SSH-tunneling)
 
 ### Access VMD and Gromacs Jupyter notebook *via* Open OnDemand (OoD) tools:
 
