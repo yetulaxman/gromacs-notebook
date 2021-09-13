@@ -48,7 +48,7 @@ singularity exec --env LANG=en_US.UTF-8 --env LC_ALL=en_US.UTF-8 -B /users/$USER
 
 ```
 
-Set-up SSH port tunnels by opening a terminal on your local computer by copy pasting the following command:
+Set-up SSH port tunnels by opening a terminal on your local computer and then copy-pasting the following command:
 
 ```bash
 
@@ -56,7 +56,7 @@ ssh  -L NNNN:localhost:NNNN  CSCUSERNAME@puhti.csc.fi ssh -L NNNN:localhost:8888
 (e.g., with some portnumber=5042, above command: ssh -L 5042:localhost:5042 CSCUSERNAME@puhti.csc.fi ssh -L 5042:localhost:6080 CSCUSERNAME@r07c49) 
                                                                 
 ```
-***Note**: Make sure to use different portnumber by each user to avoid port collision on login nodes.
+***Note**: Make sure to use a different portnumber by each user to avoid port collision on login nodes.
 
 
 Point your browser to http://localhost:portnumber (e.g., http://localhost:5042) and then click "vnc.html" as shown below:
