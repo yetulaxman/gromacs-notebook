@@ -1,4 +1,4 @@
-## Provisioning Gromacs-course (FEBS 2021 adavanced course) in CSC environment (WIP)
+## Provisioning Gromacs-course (FEBS 2021 advanced course) in CSC environment (WIP)
 
 Computational environment  for FEBS course at CSC supercomputer (Puhti) can be accessed using the following two approaches:
 
