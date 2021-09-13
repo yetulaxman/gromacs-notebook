@@ -17,9 +17,9 @@ Computational environment  for FEBS course at CSC supercomputer (Puhti) can be a
 
 <img src="./course_envi.png" width="100%">
 
-5. Click on "Connect to VNC" to launch GUI desktop to then access VMD (see below picture) 
+5. Click on "Connect to VNC" to launch GUI desktop to then VMD (see below picture) 
 <img src="./vmd.png" width="100%">
-7. Click on "Connect to Jupyter" to launch Gromacs notebook.
+7. Agian on OoD job page, click on "Connect to Jupyter" to launch Gromacs notebook.
 
 
 
@@ -56,7 +56,7 @@ ssh  -L NNNN:localhost:NNNN  CSCUSERNAME@puhti.csc.fi ssh -L NNNN:localhost:8888
 (e.g., with some portnumber=5042, above command: ssh -L 5042:localhost:5042 CSCUSERNAME@puhti.csc.fi ssh -L 5042:localhost:6080 CSCUSERNAME@r07c49) 
                                                                 
 ```
-***Note**: Make sure to use different portnumber by each user
+***Note**: Make sure to use different portnumber by each user to avoid port collision on login nodes.
 
 
 Point your browser to http://localhost:portnumber (e.g., http://localhost:5042) and then click "vnc.html" as shown below:
