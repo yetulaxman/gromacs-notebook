@@ -7,6 +7,8 @@ From:gmxapi-notebook:puhti
     mkdir -p $SINGULARITY_ROOTFS/opt/bin/
     cp start-jupyter-server $SINGULARITY_ROOTFS/opt/bin/
     chmod a+xr $SINGULARITY_ROOTFS/opt/bin/start-jupyter-server
+    cp start-jupyter-vnc $SINGULARITY_ROOTFS/opt/bin/
+    chmod a+xr $SINGULARITY_ROOTFS/opt/bin/start-jupyter-vnc
 
 %runscript
-    exec /opt/bin/start-jupyter-server
+    exec /opt/bin/start-jupyter-vnc

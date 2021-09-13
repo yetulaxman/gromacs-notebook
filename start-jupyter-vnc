@@ -1,0 +1,116 @@
+#!/bin/bash
+
+random_number () {
+  shuf -i ${1}-${2} -n 1
+}
+
+port_used () {
+  lsof -i :"$1" >/dev/null 2>&1
+}
+
+find_port () {
+  local port="$(random_number 6000 65535)"
+  while port_used "$port"; do
+    port=$(random_number 6000 65535)
+  done
+  echo "$port"
+}
+
+create_passwd () {
+  tr -cd 'a-zA-Z0-9' < /dev/urandom 2> /dev/null | head -c${1:-8}
+}
+
+# Start a Jupyter notebook server and write out instructions
+# for ssh port forwarding
+# Note: it is assumed that the port where notebook server is started
+# is available in the local machine
+
+source /usr/local/gromacs/bin/GMXRC
+source $VENV/bin/activate
+
+# set an env variable, find hostname of compute node
+NODENAME=$(hostname)
+export XDG_RUNTIME_DIR="$TMPDIR/xdg_runtime"
+mkdir -p "$XDG_RUNTIME_DIR"
+
+#start notebook server and redirect stderr
+jupyter notebook --no-browser 2> jupyter.$SLURM_JOB_ID.out &
+pid=$!
+
+# find url with token and port for ssh forwarding
+# the while loop ensures that the server has been started
+url=""
+while [ -z "$url" ]
+do
+    sleep 3
+    url=`jupyter notebook list | sed -n 's/\(http.*\) ::.*/\1/p'`
+done
+port=`echo $url | sed -e 's/.*host:\([0-9]*\).*/\1/'`
+
+vnc_password=$(create_passwd)
+(
+  umask 077
+  echo -ne "${vnc_password}\\n${vnc_password}" | vncpasswd -f > "$HOME/.vnc/passwd"
+)
+
+vnc_out=$(vncserver -rfbauth "$HOME/.vnc/passwd" -nohttpd -xstartup "$TUTORIAL/xstartup.turbovnc" 2>&1)
+vnc_pid=$(pgrep -s 0 Xvnc)
+
+display=$(echo "${vnc_out}" | awk -F':' '/^Desktop/{print $NF}')
+vnc_port=$((5900+display))
+novnc_port=$(find_port)
+
+/opt/novnc/utils/novnc_proxy --vnc "localhost:$vnc_port" --listen $novnc_port > /dev/null 2>&1 &
+novnc_pid=$!
+
+# write out tunneling instructions 
+echo -e "
+    If you have set up ssh-key login to Puhti, do this:
+    Copy/Paste this in your local terminal to ssh tunnel with remote
+    -----------------------------------------------------------------
+    Linux / macOS / MobaXTerm / Cmder:
+    ssh -N -L $port:localhost:$port -L $novnc_port:localhost:$novnc_port -J $USER@puhti.csc.fi $USER@$NODENAME
+
+    PuTTy:
+    ssh -N -L $port:localhost:$port $USER@$NODENAME
+    Set Source ($port) and Destination (localhost:$port) in:
+    PuTTy -> Connection -> SSH -> Tunnels
+    -----------------------------------------------------------------
+    "
+
+echo -e "
+    OR
+
+    If you haven't set up ssh-key based login to Puhti, do this:
+    Copy/Paste this in your local terminal to ssh tunnel with remote
+    NNNN = 5000 + the number in your training account i.e. unique to you.
+    -----------------------------------------------------------------
+    Linux / macOS / MobaXTerm / Cmder / Windows PowerShell:
+    ssh  -L NNNN:localhost:NNNN -L MMMM:localhost:MMMM $USER@puhti.csc.fi ssh -L NNNN:localhost:$port -L MMMM:localhost:$novnc_port $USER@$NODENAME
+
+    PuTTy:
+    ssh -L NNNN:localhost:$port $USER@$NODENAME
+    Set Source ($port) and Destination (localhost:$port) in:
+    PuTTy -> Connection -> SSH -> Tunnels
+    -----------------------------------------------------------------
+    "
+
+nnnnurl=`echo $url | sed s/$port/NNNN/`
+
+vnc_url="http://localhost:$novnc_port/vnc.html?password=$vnc_password"
+nnnnvnc_url=`echo $vnc_url | sed s/$novnc_port/MMMM/`
+echo -e "
+    Copy/Paste these URLs into your browser (without ssh-key connection
+    replace the port below with the NNNN you used above).
+    -----------------------------------------------------------------
+    $url
+    $vnc_url
+    or
+    $nnnnurl
+    $nnnnvnc_url
+    -----------------------------------------------------------------
+    "
+
+# Trap CTRL-C and wait for the server
+trap "kill -1 $pid;kill -1 $vnc_pid;kill -1 $novnc_pid" SIGINT
+wait $pid

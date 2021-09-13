@@ -1,15 +1,29 @@
 #!/bin/bash
 
-export XDG_RUNTIME_DIR="$TMPDIR/xdg_runtime"
-mkdir -p "$XDG_RUNTIME_DIR"
+random_number () {
+  shuf -i ${1}-${2} -n 1
+}
+
+port_used () {
+  lsof -i :"$1" >/dev/null 2>&1
+}
+
+find_port () {
+  local port="$(random_number 6000 65535)"
+  while port_used "$port"; do
+    port=$(random_number 6000 65535)
+  done
+  echo "$port"
+}
 
 create_passwd () {
   tr -cd 'a-zA-Z0-9' < /dev/urandom 2> /dev/null | head -c${1:-8}
 }
-export -f create_passwd
+
+export XDG_RUNTIME_DIR="$TMPDIR/xdg_runtime"
+mkdir -p "$XDG_RUNTIME_DIR"
 
 password=$(create_passwd)
-echo "$password"
 (
   umask 077
   echo -ne "${password}\\n${password}" | vncpasswd -f > "$HOME/.vnc/passwd"
@@ -21,11 +35,13 @@ echo ${VNC_OUT}
 
 display=$(echo "${VNC_OUT}" | awk -F':' '/^Desktop/{print $NF}')
 port=$((5900+display))
-/opt/novnc/utils/novnc_proxy --vnc "localhost:$port" &
+novnc_port=$(find_port)
+/opt/novnc/utils/novnc_proxy --vnc "localhost:$port" --listen $novnc_port > /dev/null 2>&1 &
 pid=$!
 
-echo "VNC password: $password"
+echo "NoVNC started on port $novnc_port, password: $password"
 
 # Trap CTRL-C and wait for the server
 trap "kill -1 $pid;kill -1 $VNC_PID" SIGINT
 wait $pid
+
