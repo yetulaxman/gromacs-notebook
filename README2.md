@@ -63,10 +63,11 @@ Point your browser to http://localhost:portnumber (e.g., http://localhost:5042) 
 
 <img src="./vnc.png" width="80%">
 
-2. Provide password (Password for vnc is available on the terminal prompt where you have laucnhed the VNC) to access VMD desktop
-<img src="./vnc2.png" width="80%">
+2. Provide password (Password for vnc is available on the terminal prompt where you have laucnhed the VNC) to access VNC desktop
 
-3. Open linux terminal and type "vmd" to access VMD 
+3. Open linux terminal and then type "vmd" to launch VMD 
+4. 
+  <img src="./vnc2.png" width="80%">
 
 #### Access Gromacs Jupyter notebook as an interactive job
 
