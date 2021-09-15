@@ -25,57 +25,33 @@ Computational environment  for FEBS course at CSC supercomputer (Puhti) can be a
 
 ### Access VMD and Gromacs Jupyter notebook *via* SSH tunneling:
 
-#### Access VMD via noVNC as an interactive job
+#### Access VMD via noVNC  and Gromacs notebook as an interactive job
 
-Download singularity image from allas object storage as before
+Download singularity image from allas object storage:
 
 ```bash
+
+mkdir /scratch/project_xxxx/$USER
+cd /scratch/project_xxxx/$USER
+
 # Download singularity image from allas object storage
-wget https://a3s.fi/Gromacs_utilities/xxxxx.tar.gz
-tar -xavf xxx.tar.gz 
-cd xxxx
+wget https://a3s.fi/Gromacs_utilities/gromacs-notebook-febs2021.sif
+
 ```
 
 1. Lanuch interactive session as below:
 
 ```bash
 # start interactive node as below and choose your project name on prompt
+
 sinteractive -c 2 -m 4G -d 250
 
-# Launch noVNC+VMD by copying and pasting the following command on Puhti terminal:
-
-singularity exec --env LANG=en_US.UTF-8 --env LC_ALL=en_US.UTF-8 -B /users/$USER -B /run gromacs-notebook-uef.sif /docker_entry_points/vnc 
-
-```
-
-Set-up SSH port tunnels by opening a terminal on your local computer and then copy-pasting the following command:
-
-```bash
-
-ssh  -L NNNN:localhost:NNNN  CSCUSERNAME@puhti.csc.fi ssh -L NNNN:localhost:8888 CSCUSERNAME@hostname
-(e.g., with some portnumber=5042, above command: ssh -L 5042:localhost:5042 CSCUSERNAME@puhti.csc.fi ssh -L 5042:localhost:6080 CSCUSERNAME@r07c49) 
-                                                                
-```
-***Note**: Make sure to use a different portnumber by each user to avoid port collision on login nodes.
+# Launch VMD and Gromacs notebook by copying the following command and pasting on Puhti terminal:
 
 
-2. Point your browser to http://localhost:portnumber (e.g., http://localhost:5042) and then click "vnc.html" as shown below:
-
-<img src="./vnc.png" width="80%">
-
-3. Provide password (Password for vnc is available on the terminal prompt where you have laucnhed the VNC) to access VNC desktop
-
-4. Open linux terminal and then type "vmd" to launch VMD 
- 
-  <img src="./vnc2.png" width="80%">
-
-#### Access Gromacs Jupyter notebook as an interactive job
-
-Launch Gromacs Jupyter notebook  by copying and pasting the following command:
+singularity run -B /users/$USER -B /run gromacs-notebook-febs2021.sif
 
 ```
-singularity run --env LANG=en_US.UTF-8 --env LC_ALL=en_US.UTF-8 -B /users/$USER -B /run gromacs-notebook-uef.sif 
+Just follow the instructions that appear on the terminal when you launch above command.
 
 ```
-
-Above command will start Jupyter server, and then it will print out instructions for a web address and a ssh command. Execute the ssh commands (copy-paste) as instructed to form a tunnel between your machine and the compute node.
