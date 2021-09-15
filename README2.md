@@ -63,4 +63,4 @@ ssh  -L NNNN:localhost:NNNN -L MMMM:localhost:MMMM CSCUSERNAME@puhti.csc.fi ssh 
 ```
 Make sure to use a different portnumbers by each user to avoid port collision on login nodes.
  - set some random number for NNNN,  e.g., NNNN = 5000 + the number in your training account
- - set some random number for MMMM; e.g., MMMM = 6000 + the number in your training account
+ - set some random number for MMMM, e.g., MMMM = 6000 + the number in your training account
