@@ -39,7 +39,7 @@ wget https://a3s.fi/Gromacs_utilities/gromacs-notebook-febs2021.sif
 
 ```
 
-1. Lanuch interactive session as below:
+Lanuch interactive session as below:
 
 ```bash
 # start interactive node as below and choose your project name on prompt
