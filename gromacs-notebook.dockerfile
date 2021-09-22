@@ -73,7 +73,8 @@ RUN wget https://sourceforge.net/projects/turbovnc/files/2.2.6/turbovnc_2.2.6_am
     git clone https://github.com/novnc/noVNC.git . && \
     npm install && \
     mkdir -p /opt/novnc/utils/websockify && \
-    wget https://github.com/novnc/websockify/archive/master.tar.gz -q -O - | tar xzf - -C /opt/novnc/utils/websockify --strip-components=1
+    wget https://github.com/novnc/websockify/archive/master.tar.gz -q -O - | tar xzf - -C /opt/novnc/utils/websockify --strip-components=1 && \
+    sed -i "s/UI.initSetting('resize', 'off');/UI.initSetting('resize', 'remote');/g" /opt/novnc/app/ui.js
 
 ENV PATH="/opt/TurboVNC/bin:$PATH"
 
