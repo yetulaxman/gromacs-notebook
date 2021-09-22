@@ -40,7 +40,13 @@ which ls >/dev/null && {
   eval $(dbus-launch --sh-syntax)
 
   xsetroot -solid grey
-  xfce4-session
+
+  # Start the xfce session and then disable compositing
+  xfce4-session &
+  XFCE_PID=$!
+  xfconf-query --channel=xfwm4 --property=/general/use_compositing --set=false
+  # Block until user logs out of desktop
+  wait $XFCE_PID
 } || {
   echo "TWM not found.  I give up."
   exit 1
