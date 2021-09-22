@@ -39,6 +39,11 @@ which ls >/dev/null && {
   # see https://github.com/OSC/ondemand/issues/700
   eval $(dbus-launch --sh-syntax)
 
+  # System theme has dark grey text on black background in terminal, disable using system theme
+  TPROFILE=$(gsettings get org.gnome.Terminal.ProfilesList default)
+  TPROFILE=${TPROFILE:1:-1}
+  dconf write "/org/gnome/terminal/legacy/profiles:/:$TPROFILE/use-theme-colors" false
+
   xsetroot -solid grey
 
   # Start the xfce session and then disable compositing
