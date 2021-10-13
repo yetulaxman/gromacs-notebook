@@ -33,6 +33,9 @@ NODENAME=$(hostname)
 export XDG_RUNTIME_DIR="$TMPDIR/xdg_runtime"
 mkdir -p "$XDG_RUNTIME_DIR"
 
+if [ ! -d "$HOME/febs-gromacs-tutorial" ]; then
+  cp -r "$TUTORIAL/febs-gromacs-tutorial" "$HOME"
+fi
 #start notebook server and redirect stderr
 jupyter notebook --no-browser 2> jupyter.$SLURM_JOB_ID.out &
 pid=$!

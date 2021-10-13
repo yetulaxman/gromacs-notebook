@@ -146,7 +146,8 @@ RUN . $VENV/bin/activate && \
         nglview \
         pandas \
         requests \
-        seaborn
+        seaborn \
+        mdtraj
 
 # gmxapi
 # Adapted from https://gitlab.com/gromacs/gromacs/-/blob/master/python_packaging/docker/ci.dockerfile
@@ -180,6 +181,9 @@ RUN . $VENV/bin/activate && \
 from userbase as user
 
 COPY --from=sample_restraint --chown=tutorial:tutorial $VENV $VENV
+
+RUN git clone --depth=1 https://github.com/bioexcel/2021-10-20-febs-gromacs-tutorial.git $TUTORIAL/febs-gromacs-tutorial && \
+    rm -rf "$TUTORIAL/febs-gromacs-tutorial/.git"
 
 RUN mkdir -p "$TUTORIAL/Desktop" && \
     cp "/usr/share/applications/vmd.desktop" "$TUTORIAL/Desktop" && \
