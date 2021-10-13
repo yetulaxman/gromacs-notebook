@@ -7,8 +7,8 @@ Computational environment  for FEBS course at CSC supercomputer (Puhti) can be a
 
 ### Access VMD and Gromacs Jupyter notebook *via* Open OnDemand (OoD) tools:
 
-1. CSC will provide a URL for accessing course environment via OoD approach
-2. Click the URL and login page will open for Puhti authentication (Users should have accepted Puhti service in myCSC page under a course ( or own) project) before using this service. Login page is as shown below:
+1. Access Open OnDemand (OoD) interface on Puhti login page here : https://www.puhti.csc.fi/public/login.html
+2. Login with CSC or course credentials (Users should have accepted Puhti service in myCSC page under a course ( or own) project) before using this service. Login page is as shown below:
 
 <img src="./Puhti_login.png" width="80%">
 
