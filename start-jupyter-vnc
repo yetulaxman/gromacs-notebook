@@ -25,6 +25,10 @@ create_passwd () {
 # Note: it is assumed that the port where notebook server is started
 # is available in the local machine
 
+export OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK
+export LP_NUM_THREADS=$SLURM_CPUS_PER_TASK
+export VMDFORCECPUCOUNT=$SLURM_CPUS_PER_TASK
+
 source /usr/local/gromacs/bin/GMXRC
 source $VENV/bin/activate
 
