@@ -101,7 +101,8 @@ echo -e "
     PuTTy -> Connection -> SSH -> Tunnels
     -----------------------------------------------------------------
     "
-
+# Add login?next=<notebook url> before token to open the notebook
+url=`echo $url | sed 's#?token=#login?next=/notebooks/febs-gromacs-tutorial/md-tutorial/tutorial.ipynb\&token=#'`
 nnnnurl=`echo $url | sed s/$port/NNNN/`
 
 vnc_url="http://localhost:$novnc_port/vnc.html?password=$vnc_password"
