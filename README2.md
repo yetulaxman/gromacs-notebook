@@ -62,5 +62,5 @@ Just follow the instructions that appear on the terminal when you launch above c
 ssh  -L NNNN:localhost:NNNN -L MMMM:localhost:MMMM CSCUSERNAME@puhti.csc.fi ssh -L NNNN:localhost:8888 -L MMMM:localhost:38947 CSCUSERNAME@hostname
 ```
 Make sure to use a different portnumbers by each user to avoid port collision on login nodes.
- - Jupyter notebook port: set some random number for NNNN,  e.g., NNNN = 8000 + the number in your training account (Final URL for notebook will be in the form:     http://localhost:NNNN/login?next=/notebooks/febs-gromacs-tutorial/md-tutorial/tutorial.ipynb&token=xxxxx)
- - VNC-VMD port: set some random number for MMMM, e.g., MMMM = 7000 + the number in your training account(Final URL for VNC-VMD will be ine the form:http://localhost:MMMM/vnc.html?password=xxxx)
+ - Jupyter notebook port: set some random number for NNNN,  e.g., NNNN = 8000 + the number in your training account (Final URL for notebook will be in the form:     http://localhost:NNNN/login?next=/notebooks/febs-gromacs-tutorial/md-tutorial/tutorial.ipynb&token=xxxxx ; One can copy exact URL  from the terminal when you launched container)
+ - VNC-VMD port: set some random number for MMMM, e.g., MMMM = 7000 + the number in your training account(Final URL for VNC-VMD will be ine the form:http://localhost:MMMM/vnc.html?password=xxxx; One can copy exact URL  from the terminal when you launched container)
