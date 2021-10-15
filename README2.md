@@ -56,7 +56,7 @@ Just follow the instructions that appear on the terminal when you launch above c
 
 
 
-**Note**: if you don't have SSH-keys in place,  setting-up of SSH port tunneling involves entering some random port numbers. The SSH command would look like the following:
+**Note**: if you don't have SSH-keys in place,  setting-up of SSH port tunneling involves entering some random port number. The SSH command would look like the following:
 
 ```bash
 ssh  -L NNNN:localhost:NNNN -L MMMM:localhost:MMMM CSCUSERNAME@puhti.csc.fi ssh -L NNNN:localhost:8888 -L MMMM:localhost:38947 CSCUSERNAME@hostname
