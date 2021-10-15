@@ -18,7 +18,7 @@ Computational environment  for FEBS course at CSC supercomputer (Puhti) can be a
 <img src="./course_envi.png" width="100%">
 
 5. Click on "Connect to VNC" to launch GUI desktop to then VMD (see below picture) 
-<img src="./vmd.png" width="100%">
+<img src="./OoD_gromacs.png" width="100%">
 7. Again on OoD job page, click on "Connect to Jupyter" to launch Gromacs notebook.
 
 
