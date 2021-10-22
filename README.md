@@ -17,6 +17,9 @@ sudo docker push localhost:5000/gmxapi-notebook:puhti
 
 sudo SINGULARITY_NOHTTPS=1 singularity build gromacs-notebook-puhti.sif gromacs-notebook.deffile 
 
+# or simply
+
+sudo SINGULARITY_NOHTTPS=1 singularity build chemprop_puhti.sif  docker://localhost:5000/gmxapi-notebook:puhti
 ```
 
 ## Deploying gromacs-notebook on Puhti in home directory (just for testing, NOT for production)
