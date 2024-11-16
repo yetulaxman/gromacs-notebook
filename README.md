@@ -1,124 +1,110 @@
-# gromacs-notebook (WIP)
-Porting gromacs-notebook in CSC environment
+# ABFE_Workflow on LUMI (WIP)
+Porting ABFE_Workflow in LUMI environment
 
+## Intalling ABFE_Workflow environment using LUMI container wrapper
+[LUMI container wrapper](https://docs.lumi-supercomputer.eu/software/installing/container-wrapper/) installs applications inside of a singularity container.
 
-## Building singularity image of gromacs-notebook  for Puhti usage
 
 ```bash
-# Build docker images locally using dockerfile, gromacs-notebook.dockerfile
-sudo docker build -t gmxapi/notebook:puhti -f gromacs-notebook.dockerfile . 
+# login to Puhti super computer  
+mkdir /scartch/project_xxxx/$USER && cd /scartch/project_xxxx/$USER
+git clone https://github.com/bigginlab/ABFE_workflow.git
+cd ABFE_workflow
+```
+add `ABFE-Workflow` package to the list of pip packages in the file `environment.yml`
 
-# Push to local registry
-sudo docker tag gmxapi/notebook:puhti localhost:5000/gmxapi-notebook:puhti
-sudo docker run -d -p 5000:5000 --restart=always --name registry registry:2
-sudo docker push localhost:5000/gmxapi-notebook:puhti
-
-# Build singularity image from deffile
-
-sudo SINGULARITY_NOHTTPS=1 singularity build gromacs-notebook-puhti.sif gromacs-notebook.deffile 
-
-# or simply
-
-sudo SINGULARITY_NOHTTPS=1 singularity build  gromacs-notebook-puhti.sif  docker://localhost:5000/gmxapi-notebook:puhti
+# Aproach 1 - Use LUMI container wrapper 
+## Installl ABFE using container wrapper
+```bash
+module  purge
+module load LUMI
+module load lumi-container-wrapper
+mkdir -p /projappl/project_xxx/ABFE_workflow
+conda-containerize new --prefix  /projappl/project_xxx/ABFE_workflow  environment.yml
 ```
 
-## Deploying gromacs-notebook on Puhti in home directory (just for testing, NOT for production)
+## Runnung ABFE_Workflow 
 
-Download singularity image from allas object storage
+````bash
+# cli-abfe code 
+export PATH="/projappl/project_xxx/ABFE_workflow/bin:$PATH"
+WORKDIR="/scratch/project_xxxx/$USER/ABFE/ABFE_workflow"
+cli-abfe -p ${WORKDIR}/examples/data/CyclophilinD_min/receptor.pdb  -l ${WORKDIR}/examples/data/CyclophilinD_min/ligands -o ${WORKDIR}/Results  -nogpu -nohybrid -nc 2  -nosubmit
+
+# cli-abfe-gmx code 
+cp /appl/local/csc/soft/chem/gromacs/2024.4-gpu/bin/gmx_mpi .
+gmx_mpi gmx
+export PATH="$PWD:$PATH"
+cli-abfe-gmx -d  ${WORKDIR}/examples/data/HSP90_gmx -o abfe_HSP90_out -pn HSP90_gmx -njr 30 -nr 3  -nosubmit
+```
+
+# Approach 2 - Use Singularity/Apptainer container 
+
+## Build a Singularity image with ABFE workflow environment
+```bash
+# Build a singularity container for ABFE_workflow environment
+singularity --fakeroot abfe.sif abfe.def 
+```
+Where the content of abfe.def file is shown below:
 
 ```bash
-wget https://a3s.fi/Gromacs_utilities/gromacs.tar.gz
-tar -xavf gromacs.tar.gz 
-cd gromacs
-```
-Port rendering on Puhti
+Bootstrap : docker
+From :  continuumio/miniconda3
+IncludeCmd : yes
 
-Issue the following SSH command on local machine:
-```bash
-ssh -l <username> -L 8888:localhost:8888 puhti-login1.csc.fi    # change port number if notebook is exposed on different port (default port is 8888 here); 
-                                                                # choose login1 or login2 node depending on where notebook is launched
-```
-Launch gromacs-notebook
+%labels
+AUTHOR email@email.com
 
-```bash
-singularity exec -B /users/<username>  gromacs-notebook-puhti.sif /docker_entry_points/notebook
+%files
+environment.yml
 
-```
-Point your browser to http://localhost:8888  on your local machine and the copy the token value generated after launching notebook. or simply, copy and paste full path (i.e., http://localhost:8888/?token=tokenkey). If successful, gromacs-notebook should appear in browser.
+%post
+apt-get update && apt-get install -y procps && apt-get clean -y
+/opt/conda/bin/conda env create -n snakemake_env -f /environment.yml
+/opt/conda/bin/conda clean -a
 
-### Deploying gromacs-notebook on Puhti as an interactive job (Production)
+%environment
+export PATH=/opt/conda/bin:$PATH
+. /opt/conda/etc/profile.d/conda.sh
+conda activate snakemake_env
 
-Download singularity image from allas object storage as before
+%runscript
+echo "This is an example script for building singularity/appatainer image"
+``` 
 
-```bash
-# Download singularity image from allas object storage
-wget https://a3s.fi/Gromacs_utilities/gromacs.tar.gz
-tar -xavf gromacs.tar.gz 
-cd gromacs
-```
+## Runnung ABFE_Workflow
 
-Launch gromacs-notebook in an interactive node
-
-Lanuch interactive session as below:
+## Run ABFE_workflow inside of a container 
 
 ```bash
-# start interactive node as below and choose your project name on prompt
-sinteractive -c 2 -m 4G -d 250
+#!/bin/bash -l
+#SBATCH --job-name=examplejob   # Job name
+#SBATCH --output=examplejob.o%j # Name of stdout output file
+#SBATCH --error=examplejob.e%j  # Name of stderr error file
+#SBATCH --partition=small       # Partition (queue) name
+#SBATCH --ntasks=1              # One task (process)
+#SBATCH --cpus-per-task=128     # Number of cores (threads)
+#SBATCH --time=12:00:00         # Run time (hh:mm:ss)
+#SBATCH --account=project_<id>  # Project for billing
 
-# Launch notebook
+WORKDIR="/scratch/project_xxxx/$USER/ABFE/ABFE_workflow"
+#cli-abfe command
+singularity exec -B $PWD abfe.sif cli-abfe -p ${WORKDIR}/examples/data/CyclophilinD_min/receptor.pdb  -l ${WORKDIR}/examples/data/CyclophilinD_min/ligands -o ${WORKDIR}/Results_gmx  -nogpu -nohybrid -nc 2  -nosubmit
 
-singularity exec -B /users/<username>  gromacs-notebook-puhti.sif /docker_entry_points/notebook # mount your home to work
 ```
-SSH port tunneling for login node first and then for compute node
+#cli-abfe-gmx command
 
 ```bash
-ssh -l <username> -L 8888:localhost:8888 puhti-login1.csc.fi    # Issue this command while being on local machine
-                                                                # change port number if notebook is exposed on different port (default port is 8888 here); 
-                                                                # choose login1 or login2 node depending on where notebook is launched
-                                                                                                                       
-ssh -l <username>  -L 8888:localhost:8888 <username>@$HOSTNAME      # Issue this command on login node; $HOSTNAME is compute node attached to interactive session
-                                                                
+#!/bin/bash -l
+#SBATCH --job-name=examplejob   # Job name
+#SBATCH --output=examplejob.o%j # Name of stdout output file
+#SBATCH --error=examplejob.e%j  # Name of stderr error file
+#SBATCH --partition=small-g       # Partition (queue) name
+#SBATCH --ntasks=1              # One task (process)
+#SBATCH --cpus-per-task=128     # Number of cores (threads)
+#SBATCH --time=12:00:00         # Run time (hh:mm:ss)
+#SBATCH --account=project_<id>  # Project for billing
+
+singularity exec -B $PWD abfe.sif cli-abfe-gmx -d  examples/data/HSP90_gmx -o abfe_HSP90_out -pn HSP90_gmx -njr 30 -nr 3  -nosubmit
+
 ```
-
-Point your browser to http://localhost:8888  and copy the token value generated after launching notebook. or copy and paste full path (i.e., http://localhost:8888/?token=tokenkey). If successful, gromacs-notebook should be visible.
-
-
-### Deploying gromacs-notebook on Puhti as a batch job (Production)
-
-Download singularity image from allas object storage as before
-
-```bash
-# Download singularity image from allas object storage
-wget https://a3s.fi/Gromacs_utilities/gromacs.tar.gz
-tar -xavf gromacs.tar.gz 
-cd gromacs
-```
-
-Lanuch  batch job as below:
-
-```bash
-#!/bin/bash
-#SBATCH --time=00:15:00
-#SBATCH --partition=test
-#SBATCH --account=project_xxx
-
-echo $HOSTNAME
-
-singularity exec -B /users/$USER  gromacs-notebook-puhti.sif /docker_entry_points/notebook
-```
-SSH port tunneling for login node first and then for compute node
-
-```bash
-ssh -l <username> -L 8888:localhost:8888 puhti-login1.csc.fi    # Issue this command while being on local machine
-                                                                # change port number if notebook is exposed on different port (default port is 8888 here); 
-                                                                # choose login1 or login2 node depending on where notebook is launched
-                                                                                                                       
-ssh -l <username>  -L 8888:localhost:8888 <username>@$HOSTNAME       # Issue this command on login node; $HOSTNAME is compute node attached in batch job
-                                                                     # hostname  of compute node attached to batch job is available in slurm output file 
-                                                                
-```
-
-Point your browser to http://localhost:8888  and copy the token value generated after launching notebook. or copy and paste full path (i.e., http://localhost:8888/?token=tokenkey). If successful, gromacs-notebook should be visible.
-
-
-
