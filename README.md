@@ -154,9 +154,9 @@ echo "This is an example script for building singularity/appatainer image"
 #SBATCH --time=12:00:00         # Run time (hh:mm:ss)
 #SBATCH --account=project_<id>  # Project for billing
 
-WORKDIR="/scratch/project_xxxx/$USER/ABFE/ABFE_workflow"
+WORKDIR="/scratch/project_xxxx/$USER/ABFE_workflow"
 #cli-abfe command
-singularity exec -B $PWD abfe.sif cli-abfe -p ${WORKDIR}/examples/data/CyclophilinD_min/receptor.pdb  -l ${WORKDIR}/examples/data/CyclophilinD_min/ligands -o ${WORKDIR}/Results_gmx  -nogpu -nohybrid -nc 2  -nosubmit
+singularity exec -B $PWD abfe.sif cli-abfe -p ${WORKDIR}/examples/data/CyclophilinD_min/receptor.pdb  -l ${WORKDIR}/examples/data/CyclophilinD_min/ligands -o ${WORKDIR}/Results  -nogpu -nohybrid -nc $SLURM_CPUS_PER_TASK  -nosubmit
 
 ```
 #cli-abfe-gmx command
@@ -172,7 +172,9 @@ singularity exec -B $PWD abfe.sif cli-abfe -p ${WORKDIR}/examples/data/Cyclophil
 #SBATCH --time=12:00:00         # Run time (hh:mm:ss)
 #SBATCH --account=project_<id>  # Project for billing
 
+export OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK
+
 export PATH="$PWD:$PATH"
-singularity exec -B $PWD abfe.sif cli-abfe-gmx -d  examples/data/HSP90_gmx -o abfe_HSP90_out -pn HSP90_gmx -njr 30 -nr 3  -nosubmit
+singularity exec -B $PWD abfe.sif cli-abfe-gmx -d  examples/data/HSP90_gmx -o abfe_HSP90_out -pn HSP90_gmx -njr $SLURM_CPUS_PER_TASK -nr 3  -nosubmit
 
 ```
