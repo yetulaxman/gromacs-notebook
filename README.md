@@ -23,7 +23,7 @@ conda-containerize new --prefix  /projappl/project_xxx/ABFE_workflow  environmen
 
 ## Run ABFE_Workflow as below:
 
-````bash
+```bash
 # add installed binaries to $PATH 
 export PATH="/projappl/project_xxx/ABFE_workflow/bin:$PATH"
 # check if ABFE workflow is installed
@@ -37,15 +37,20 @@ cli-abfe -p ${WORKDIR}/examples/data/CyclophilinD_min/receptor.pdb  \
 -nohybrid \
 -nc 2 \
 -nosubmit
+```
 
-# cli-abfe-gmx code; gmx-mpi compiled binary at CSC; you can copy/rename and add the path. workflow uses `gmx`command. This set up can be changed  if needed 
+cli-abfe-gmx code -  gmx-mpi is compiled binary at CSC; you can copy/rename and add the path. workflow uses *gmx* command instead. here is an ad-hoc tweak.
+
+```bash
 cp /appl/local/csc/soft/chem/gromacs/2024.4-gpu/bin/gmx_mpi .
 gmx_mpi gmx
 # as example is with toy data, one can run on login node 
 export PATH="$PWD:$PATH"
 cli-abfe-gmx -d  ${WORKDIR}/examples/data/HSP90_gmx -o abfe_HSP90_out -pn HSP90_gmx -njr 30 -nr 3  -nosubmit
 ```
+  
 wrap the same job inside of batch script and submit it to the cluster:
+
 ```bash
 #!/bin/bash -l
 #SBATCH --job-name=examplejob   # Job name
