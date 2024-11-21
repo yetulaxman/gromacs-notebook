@@ -11,7 +11,7 @@ git clone https://github.com/bigginlab/ABFE_workflow.git
 
 ### Intalling ABFE_Workflow environment in LUMI 
 
-As `ABFE-Workflow` is available as pip package, add it to the list of pip packages in the file `environment.yml` which is available in GitHub repository. otherwise install it from the cloned version
+As `ABFE-Workflow` is available as a pip package, add it to the list of other pip packages in the environmet file `environment.yml` which is available in orginal ABFE GitHub repository. Otherwise install it from the cloned version.
 
 Install ABFE_Workflow using container wrapper as below:
 ```bash
