@@ -53,7 +53,7 @@ export PATH="$PWD:$PATH"
 cli-abfe-gmx -d  ${WORKDIR}/examples/data/HSP90_gmx -o abfe_HSP90_out -pn HSP90_gmx -njr 30 -nr 3  -nosubmit
 ```
   
-For any real world use case, wrap the same commands inside of batch script and submit it to the cluster:
+For any **real-world** use case, wrap the same commands inside of batch script and submit it to the cluster:
 
 ```bash
 #!/bin/bash -l
@@ -81,7 +81,7 @@ cli-abfe -p ${WORKDIR}/examples/data/CyclophilinD_min/receptor.pdb  \
  -nc $SLURM_CPUS_PER_TASK \
  -nosubmit
 ```
-and submit the job to cluster after replacing with project name etc:
+Save above script to a file (say abfe_batch.sh) and submit the job to cluster after replacing with project name etc:
 ```bash
 sbatch abfe_batch.sh
 ```
