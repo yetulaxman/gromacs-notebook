@@ -1,55 +1,59 @@
-# Rough notes on deploying ABFE_Workflow in LUMI environment (WIP)
-ABFE_workflow is cloned from the GitHub: https://github.com/bigginlab/ABFE_workflow
+# Notes on deploying ABFE_Workflow in LUMI environment (WIP)
+ABFE workflow is cloned from the [GitHub repository](https://github.com/bigginlab/ABFE_workflow) as below:
 
-## Intalling ABFE_Workflow environment in LUMI 
 ```bash
-# login to Puhti super computer  
-mkdir /scratch/project_xxxx/$USER && cd /scartch/project_xxxx/$USER
+# Login to LUMI  supercomputer and clone the repo
+# ssh -i ~/.ssh/private_key <cscusername>@lumi.csc.fi  
+mkdir -p /scratch/project_xxxx/$USER && cd /scartch/project_xxxx/$USER
 git clone https://github.com/bigginlab/ABFE_workflow.git
-cd ABFE_workflow
 ```
-As `ABFE-Workflow` is available as pip package, add it to the list of pip packages in the file `environment.yml`
+## Approach 1 - Use [LUMI container wrapper](https://docs.lumi-supercomputer.eu/software/installing/container-wrapper/) 
 
-# Approach 1 - Use [LUMI container wrapper](https://docs.lumi-supercomputer.eu/software/installing/container-wrapper/) 
+### Intalling ABFE_Workflow environment in LUMI 
 
-## Install ABFE_Workflow using container wrapper as below:
+As `ABFE-Workflow` is available as pip package, add it to the list of pip packages in the file `environment.yml` which is available in GitHub repository. otherwise install it from the cloned version
+
+Install ABFE_Workflow using container wrapper as below:
 ```bash
+cd /scartch/project_xxxx/$USER/ABFE_workflow
 module  purge
 module load LUMI
 module load lumi-container-wrapper
 mkdir -p /projappl/project_xxx/ABFE_workflow
 conda-containerize new --prefix  /projappl/project_xxx/ABFE_workflow  environment.yml
 ```
+You can ignore some deprecation warnings depending on the python version.
 
-## Run ABFE_Workflow as below:
+### Running ABFE_Workflow 
 
 ```bash
 # add installed binaries to $PATH 
 export PATH="/projappl/project_xxx/ABFE_workflow/bin:$PATH"
-# check if ABFE workflow is installed
+# check if ABFE workflow is installed properly
 cli-abfe -h
 # check if toy example can be run
 WORKDIR="/scratch/project_xxxx/$USER/ABFE_workflow"
+mkdir -p ${WORKDIR}/Results
 cli-abfe -p ${WORKDIR}/examples/data/CyclophilinD_min/receptor.pdb  \
  -l ${WORKDIR}/examples/data/CyclophilinD_min/ligands \
  -o ${WORKDIR}/Results  \
 -nogpu \
 -nohybrid \
--nc 2 \
+-nc 2 \     #   nc: NUMBER_OF_CPUS_PER_JOB
 -nosubmit
 ```
+Similarly you can also test for the command: cli-abfe-gmx 
 
-cli-abfe-gmx code -  gmx-mpi is compiled binary at CSC; you can copy/rename and add the path. workflow uses *gmx* command instead. here is an ad-hoc tweak.
+As per cli-abfe-gmx command on LUMI,  gmx-mpi is the compiled binary at the moment on LUMI whereas ABFE workflow expects *gmx* command.   You can copy/rename and add the path. Here is an ad-hoc tweak ( this can be streamlined as needed later):
 
 ```bash
-cp /appl/local/csc/soft/chem/gromacs/2024.4-gpu/bin/gmx_mpi .
-gmx_mpi gmx
+cp /appl/local/csc/soft/chem/gromacs/2024.4-gpu/bin/gmx_mpi . && mv gmx_mpi gmx
 # as example is with toy data, one can run on login node 
 export PATH="$PWD:$PATH"
 cli-abfe-gmx -d  ${WORKDIR}/examples/data/HSP90_gmx -o abfe_HSP90_out -pn HSP90_gmx -njr 30 -nr 3  -nosubmit
 ```
   
-wrap the same job inside of batch script and submit it to the cluster:
+For any real world use case, wrap the same commands inside of batch script and submit it to the cluster:
 
 ```bash
 #!/bin/bash -l
@@ -68,7 +72,7 @@ export OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK
 export PATH="/projappl/project_xxxx /ABFE_workflow/bin:$PATH"
 WORKDIR="/scratch/project_xxxx /$USER/ABFE_workflow"
 #cli-abfe command
-
+mkdir -p ${WORKDIR}/Results
 cli-abfe -p ${WORKDIR}/examples/data/CyclophilinD_min/receptor.pdb  \
  -l ${WORKDIR}/examples/data/CyclophilinD_min/ligands \
  -o ${WORKDIR}/Results  \
@@ -77,8 +81,7 @@ cli-abfe -p ${WORKDIR}/examples/data/CyclophilinD_min/receptor.pdb  \
  -nc $SLURM_CPUS_PER_TASK \
  -nosubmit
 ```
-
-submit the job to cluster:
+and submit the job to cluster after replacing with project name etc:
 ```bash
 sbatch abfe_batch.sh
 ```
@@ -99,20 +102,20 @@ export OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK
 
 export PATH="/projappl/project_xxxx/ABFE_workflow/bin:$PATH"
 WORKDIR="/scratch/project_xxxxx/$USER/ABFE_workflow"
-#cli-abfe command
-
+#cli-abfe-gmx command
+mkdir -p ${WORKDIR}/abfe_HSP90_out
 export PATH="$PWD:$PATH"
 cli-abfe-gmx -d  ${WORKDIR}/examples/data/HSP90_gmx -o abfe_HSP90_out -pn HSP90_gmx -njr $SLURM_CPUS_PER_TASK -nr 3  -nosubmit
 ```
 
-# Approach 2 - Use Singularity/Apptainer container 
+## Approach 2 - Use Singularity/Apptainer container 
 
-## Build a Singularity image with ABFE workflow environment
+### Build a Singularity image with ABFE workflow environment
 ```bash
 # Build a singularity container image for ABFE_workflow environment
-singularity --fakeroot abfe.sif abfe.def  # this is ran on Puhti  and image can be downloaded: ```wget  https://a3s.fi/abfe/abfe.sif```
+singularity --fakeroot abfe.sif abfe.def  # Image is built on Puhti and it can be downloaded: wget  https://a3s.fi/abfe/abfe.sif
 ```
-Where the content of abfe.def file is shown below:
+The abfe.def file is below:
 
 ```bash
 Bootstrap : docker
@@ -139,9 +142,9 @@ conda activate snakemake_env
 echo "This is an example script for building singularity/appatainer image"
 ``` 
 
-## Runnung ABFE_Workflow
+### Run the ABFE_Workflow
 
-## Run ABFE_workflow inside of a container 
+Run ABFE_workflow inside of a container 
 
 ```bash
 #!/bin/bash -l
@@ -159,7 +162,7 @@ WORKDIR="/scratch/project_xxxx/$USER/ABFE_workflow"
 singularity exec -B $PWD abfe.sif cli-abfe -p ${WORKDIR}/examples/data/CyclophilinD_min/receptor.pdb  -l ${WORKDIR}/examples/data/CyclophilinD_min/ligands -o ${WORKDIR}/Results  -nogpu -nohybrid -nc $SLURM_CPUS_PER_TASK  -nosubmit
 
 ```
-#cli-abfe-gmx command
+Run ABFE_GMX workflow inside of a container 
 
 ```bash
 #!/bin/bash -l
@@ -174,6 +177,7 @@ singularity exec -B $PWD abfe.sif cli-abfe -p ${WORKDIR}/examples/data/Cyclophil
 
 export OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK
 
+# cli-abfe-gmx command
 export PATH="$PWD:$PATH"
 singularity exec -B $PWD abfe.sif cli-abfe-gmx -d  examples/data/HSP90_gmx -o abfe_HSP90_out -pn HSP90_gmx -njr $SLURM_CPUS_PER_TASK -nr 3  -nosubmit
 
