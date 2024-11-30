@@ -21,8 +21,18 @@ module load LUMI
 module load lumi-container-wrapper
 mkdir -p /projappl/project_xxx/ABFE_workflow
 conda-containerize new --prefix  /projappl/project_xxx/ABFE_workflow  environment.yml
+
+export PATH="/projappl/project_462000007/ABFE_workflow/bin:$PATH"
+export PYTHONUSERBASE="/scratch/project_462000007/$USERABFE_workflow/venv"
+export WORKDIR="/scartch/project_xxxx/$USER/ABFE_workflow"
+pip3 install --user  .
+pip3 install --user MDAnalysis==2.8.0
+# Do some hacks to prevent errors from python interpreter
+sed -i 's@#!.*@#!/projappl/project_462000007/ABFE_workflow/bin/python@g' /projappl/project_462000007/ABFE_workflow/bin/snakemake
+ls $WORKDIR/venv/bin/* | xargs sed -i 's@#!.*@#!/projappl/project_462000007/ABFE_workflow/bin/python@g'
 ```
-You can ignore some deprecation warnings depending on the python version.
+!! Note: In order to prevent errors related to Tpx format errors, change supperted version from 133 to 134 as expected from Gromacs v2024.3 ( go to line starting with "SUPPORTED_VERSIONS" in the script here : venv/lib/python3.10/site-packages/MDAnalysis/topology/tpr/setting.py and change 133 to 134 in the list of supported version) ..yes cheating !!!
+
 
 ### Running ABFE_Workflow 
 
