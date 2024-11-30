@@ -5,7 +5,7 @@ ABFE workflow is cloned from the [GitHub repository](https://github.com/bigginla
 # Login to LUMI  supercomputer and clone the repo
 # ssh -i ~/.ssh/private_key <cscusername>@lumi.csc.fi  
 mkdir -p /scratch/project_xxxx/$USER && cd /scartch/project_xxxx/$USER
-git clone https://github.com/bigginlab/ABFE_workflow.git
+git clone https://github.com/yetulaxman/ABFE_workflow.git
 ```
 ## Approach 1 - Use [LUMI container wrapper](https://docs.lumi-supercomputer.eu/software/installing/container-wrapper/) 
 
@@ -23,8 +23,8 @@ mkdir -p /projappl/project_xxx/ABFE_workflow
 conda-containerize new --prefix  /projappl/project_xxx/ABFE_workflow  environment.yml
 
 export PATH="/projappl/project_462000007/ABFE_workflow/bin:$PATH"
-export PYTHONUSERBASE="/scratch/project_462000007/$USERABFE_workflow/venv"
-export WORKDIR="/scartch/project_xxxx/$USER/ABFE_workflow"
+export PYTHONUSERBASE="/scratch/project_462000007/$USER/ABFE_workflow/venv"
+export WORKDIR="/scartch/project_462000007/$USER/ABFE_workflow"
 pip3 install --user  .
 pip3 install --user MDAnalysis==2.8.0
 # Do some hacks to prevent errors from python interpreter
