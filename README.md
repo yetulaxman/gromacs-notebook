@@ -53,7 +53,7 @@ cli-abfe -p ${WORKDIR}/examples/data/CyclophilinD_min/receptor.pdb  -l ${WORKDIR
 cd ${WORKDIR}/Results
 wget https://a3s.fi/abfe/abfe_lumi.tar.gz && tar -xavf abfe_lumi.tar.gz && rm abfe_lumi.tar.gz
 mv abfe_lumi/*.* .
-bash  bash prepare_for_lumi.sh
+bash prepare_for_lumi.sh
 
 # Run jobs on LUMI using slurm exercutor (not recommended):
 cd slurm_jobs
