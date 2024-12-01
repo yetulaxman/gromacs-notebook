@@ -24,7 +24,8 @@ conda-containerize new --prefix  /projappl/project_xxx/ABFE_workflow  environmen
 
 export PATH="/projappl/project_462000007/ABFE_workflow/bin:$PATH"
 export PYTHONUSERBASE="/scratch/project_462000007/$USER/ABFE_workflow/venv"
-export WORKDIR="/scartch/project_462000007/$USER/ABFE_workflow"
+export WORKDIR="/scratch/project_462000007/$USER/ABFE_workflow"
+# install ABFE and MDanalysis as venv - you can modify the scripts as needed unlike those in tyykky env
 pip3 install --user  .
 pip3 install --user MDAnalysis==2.8.0
 # Do some hacks to prevent errors from python interpreter
@@ -42,15 +43,30 @@ export PATH="/projappl/project_xxx/ABFE_workflow/bin:$PATH"
 # check if ABFE workflow is installed properly
 cli-abfe -h
 # check if toy example can be run
-WORKDIR="/scratch/project_xxxx/$USER/ABFE_workflow"
-mkdir -p ${WORKDIR}/Results
-cli-abfe -p ${WORKDIR}/examples/data/CyclophilinD_min/receptor.pdb  \
- -l ${WORKDIR}/examples/data/CyclophilinD_min/ligands \
- -o ${WORKDIR}/Results  \
--nogpu \
--nohybrid \
--nc 2 \     #   nc: NUMBER_OF_CPUS_PER_JOB
--nosubmit
+WORKDIR="/scratch/project_462000007/$USER/ABFE_workflow"
+export PATH="/projappl/project_462000007/ABFE_workflow/bin:$PATH"
+export PYTHONUSERBASE="/scratch/project_462000007/$USER/ABFE_workflow/venv"
+# just test with one ligand: ligand-4.sdf
+mv ${WORKDIR}/examples/data/CyclophilinD_min/ligands ${WORKDIR}/examples/data/CyclophilinD_min/ligands_orig
+mkdir ${WORKDIR}/examples/data/CyclophilinD_min/ligands && cp ${WORKDIR}/examples/data/CyclophilinD_min/ligands_orig/ligand-4.sdf  ${WORKDIR}/examples/data/CyclophilinD_min/ligands 
+cli-abfe -p ${WORKDIR}/examples/data/CyclophilinD_min/receptor.pdb  -l ${WORKDIR}/examples/data/CyclophilinD_min/ligands -o ${WORKDIR}/Results -ncl 2  -njl 2  -njr 2 -nr 2
+cd ${WORKDIR}/Results
+wget https://a3s.fi/abfe/abfe_lumi.tar.gz && tar -xavf abfe_lumi.tar.gz && rm abfe_lumi.tar.gz
+mv abfe_lumi/*.* .
+bash  bash prepare_for_lumi.sh
+
+# Run jobs on LUMI using slurm exercutor (not recommended):
+cd slurm_jobs
+sbatch  lumi_batch_cpu_jobs.sh
+sbatch lumi_batch_gpu_jobs.sh
+# Once above jobs are finished; collect the desired results
+sbatch lumi_batch_final_jobs.sh
+
+# Run job on LUMI using HyperQueue executor
+cd hq_jobs/
+sbatch batch_hq_cpu.sh
+sbatch batch_hq_gpu.sh
+# finally collect results
 ```
 Similarly you can also test for the command: cli-abfe-gmx 
 
