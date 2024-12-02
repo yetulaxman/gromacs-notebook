@@ -1,5 +1,5 @@
 # Notes on deploying ABFE_Workflow in LUMI environment (WIP)
-ABFE workflow [GitHub repository](https://github.com/bigginlab/ABFE_workflow) is cloned and modified the hard-coded scripts to fit the slurm queues on LUMI. 
+ABFE workflow [GitHub repository](https://github.com/bigginlab/ABFE_workflow) is cloned and modified some hard-coded scripts from the workflow to fit to the slurm queues on LUMI. 
 
 ```bash
 # Login to LUMI  supercomputer and clone the repo
