@@ -1,5 +1,5 @@
 # Notes on deploying ABFE_Workflow in LUMI environment (WIP)
-ABFE workflow is cloned from the [GitHub repository](https://github.com/bigginlab/ABFE_workflow) as below:
+ABFE workflow [GitHub repository](https://github.com/bigginlab/ABFE_workflow) is cloned and modified the hard-coded scripts to fit the slurm queues on LUMI. 
 
 ```bash
 # Login to LUMI  supercomputer and clone the repo
@@ -9,7 +9,7 @@ git clone https://github.com/yetulaxman/ABFE_workflow.git
 ```
 ## Use [LUMI container wrapper](https://docs.lumi-supercomputer.eu/software/installing/container-wrapper/) 
 
-### Intalling ABFE_Workflow environment in LUMI 
+### Intalling ABFE_Workflow environment in LUMI supercomputer
 
 As `ABFE-Workflow` is available as a pip package, add it to the list of other pip packages in the environmet file `environment.yml` which is available in orginal ABFE GitHub repository. Otherwise install it from the cloned version.
 
