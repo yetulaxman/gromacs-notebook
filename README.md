@@ -52,19 +52,11 @@ wget https://a3s.fi/abfe/abfe_lumi.tar.gz && tar -xavf abfe_lumi.tar.gz && rm ab
 cp Snakefile.smk abfe_lumi/  && cd abfe_lumi
  bash prepare_abfe_for_lumi.sh
 
-# Run jobs on LUMI using slurm exercutor (not recommended):
+# Run jobs on LUMI by going into respective directories 
 cd slurm_jobs
-sbatch  lumi_batch_slurm_cpu.sh
-sbatch  lumi_batch_slurm_gpu.sh
-# Once above jobs are finished; collect the desired results
-sbatch lumi_batch_slurm_final.sh 
-
-# Run job on LUMI using HyperQueue executor
-cd hq_jobs/
-sbatch lumi_batch_hq_cpu.sh
-sbatch lumi_batch_hq_gpu.sh
-# finally collect results
-sbatch lumi_batch_hq_final.sh
+sbatch  cpujobs-*/lumi_batch_hq_cpu.sh
+sbatch  gpujobs-*/lumi_batch_hq_gpu.sh
+sbatch  Final_job/lumi_batch_abfe_final.sh
 ```
 
 ### Trouble shooting
