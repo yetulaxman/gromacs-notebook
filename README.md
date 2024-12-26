@@ -49,8 +49,8 @@ mkdir ${WORKDIR}/examples/data/CyclophilinD_min/ligands && cp ${WORKDIR}/example
 cli-abfe -p ${WORKDIR}/examples/data/CyclophilinD_min/receptor.pdb  -l ${WORKDIR}/examples/data/CyclophilinD_min/ligands -o ${WORKDIR}/Results -ncl 7  -njl 10  -njr 2 -nr 2
 cd ${WORKDIR}/Results
 wget https://a3s.fi/abfe/abfe_lumi.tar.gz && tar -xavf abfe_lumi.tar.gz && rm abfe_lumi.tar.gz
-mv abfe_lumi/*.* .
-bash prepare_for_lumi.sh
+cp Snakefile.smk abfe_lumi/  && cd abfe_lumi
+ bash prepare_abfe_for_lumi.sh
 
 # Run jobs on LUMI using slurm exercutor (not recommended):
 cd slurm_jobs
