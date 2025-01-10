@@ -1,15 +1,15 @@
 # Notes on deploying ABFE_Workflow in LUMI environment (WIP)
 ABFE workflow [GitHub repository](https://github.com/bigginlab/ABFE_workflow) is cloned and modified some hard-coded scripts from the workflow to fit to the slurm queues on LUMI. 
 
+## Login to LUMI supercomputer
+
 ```bash
 # Login to LUMI  supercomputer and clone the repo
 # ssh -i ~/.ssh/private_key <cscusername>@lumi.csc.fi  
 mkdir -p /scratch/project_xxxx/$USER && cd /scartch/project_xxxx/$USER
 git clone https://github.com/yetulaxman/ABFE_workflow.git
 ```
-## Use [LUMI container wrapper](https://docs.lumi-supercomputer.eu/software/installing/container-wrapper/) 
-
-### Intalling ABFE_Workflow environment in LUMI supercomputer
+### Install ABFE_Workflow using [LUMI container wrapper](https://docs.lumi-supercomputer.eu/software/installing/container-wrapper/)
 
 Install ABFE_Workflow using container wrapper as below:
 ```bash
@@ -18,16 +18,16 @@ module  purge
 module load LUMI
 module load lumi-container-wrapper
 mkdir -p /projappl/project_xxx/ABFE_workflow
-conda-containerize new --prefix  /projappl/project_xxx/ABFE_workflow  environment.yml
-
-export PATH="/projappl/project_462000007/ABFE_workflow/bin:$PATH"
+# the following command will install ABFE workflow 
+conda-containerize new --prefix  /projappl/project_xxxx/ABFE_workflow  environment.yml
+export PATH="/projappl/project_xxxx/ABFE_workflow/bin:$PATH"
+# install ABFE and MDanalysis as venv - you can modify the scripts as needed unlike those installed in LUMI container wrapper env
 export PYTHONUSERBASE="/scratch/project_462000007/$USER/ABFE_workflow/venv"
-export WORKDIR="/scratch/project_462000007/$USER/ABFE_workflow"
-# install ABFE and MDanalysis as venv - you can modify the scripts as needed unlike those in tyykky env
 pip3 install --user  .
 pip3 install --user MDAnalysis==2.8.0
 # Do some hacks to prevent errors from python interpreter
-sed -i 's@#!.*@#!/projappl/project_462000007/ABFE_workflow/bin/python@g' /projappl/project_462000007/ABFE_workflow/bin/snakemake
+sed -i 's@#!.*@#!/projappl/project_462000007/ABFE_workflow/bin/python@g' /projappl/project_xxxx/ABFE_workflow/bin/snakemake
+export WORKDIR="/scratch/project_xxxx/$USER/ABFE_workflow"
 ls $WORKDIR/venv/bin/* | xargs sed -i 's@#!.*@#!/projappl/project_462000007/ABFE_workflow/bin/python@g'
 ```
 > In order to prevent errors Tpx format related errors, change supperted version from 133 to 134 in MDanalysis scripts as expected from Gromacs v2024.3 ( go to line starting with "SUPPORTED_VERSIONS" in the script here : venv/lib/python3.10/site-packages/MDAnalysis/topology/tpr/setting.py and change 133 to 134 in the list of supported version) ..yes bit cheating !!!
@@ -35,10 +35,10 @@ ls $WORKDIR/venv/bin/* | xargs sed -i 's@#!.*@#!/projappl/project_462000007/ABFE
 ### Running ABFE_Workflow on LUMI
 
 ```bash
-# add installed binaries to $PATH 
-export PATH="/projappl/project_462000007/ABFE_workflow/bin:$PATH"
-export PYTHONUSERBASE="/scratch/project_462000007/yetukuri/ABFE_workflow/venv"
-export WORKDIR="/scratch/project_462000007/yetukuri/ABFE_workflow"
+# add installed binaries to $PATH ; replace with correct project number
+export PATH="/projappl/project_xxxx/ABFE_workflow/bin:$PATH"
+export PYTHONUSERBASE="/scratch/project_xxxxx/yetukuri/ABFE_workflow/venv"
+export WORKDIR="/scratch/project_xxxx/yetukuri/ABFE_workflow"
 export PATH="$WORKDIR/venv/bin:$PATH"
 
 # check if ABFE workflow is installed properly
@@ -52,10 +52,25 @@ wget https://a3s.fi/abfe/abfe_lumi.tar.gz && tar -xavf abfe_lumi.tar.gz && rm ab
 cp Snakefile.smk abfe_lumi/  && cd abfe_lumi
  bash prepare_abfe_for_lumi.sh
 
-# Above bash script (prepare_abfe_for_lumi.sh) automatically submits CPU and GPU jobs. Once the submitted jobs are run successfully, you can go to the Final_job folder and submit final job to gather the results.
+# Above bash script (prepare_abfe_for_lumi.sh) submits CPU and GPU jobs  automatically. Once the submitted jobs are run successfully, you can go to the the folder, Final_job folder and submit final job to gather the final ABFE results.
 sbatch  Final_job/lumi_batch_abfe_final.sh
 ```
 
-### Trouble shooting guide
+### Trouble shooting guide (WIP)
+
+1. when testing snakemake commands, if you encouter the following issue: "AttributeError: module 'lib' has no attribute 'X509_V_FLAG_NOTIFY_POLICY’", run the following commands:
+```bash   
+export PATH="/projappl/project_xxxx/ABFE_workflow/bin:$PATH"
+export PYTHONUSERBASE="/scratch/project_xxxxx/yetukuri/ABFE_workflow/venv"
+pip3 install --user pyopenssl
+pip3 install pyopenssl --upgrade
+```
+2. if you see the issue "LockException:Error: Directory cannot be locked or similar ", you can either perform "snakemake –unlock" or delete  ".snakemake directory"
+3. In the latest gromacs versions, there may be fatal errors; "Option -pbc mol requires a .tpr file for the -s option", one solution is to remove "–pbc mol"
+4. Snakemake error: "OSError: Missing files after 1000 seconds. This might be due to filesystem latency"  increase snakemake argument --latency-wait ( e.g., --latency-wait 2000 )
+
+...and many more ....
+
+
 
 
