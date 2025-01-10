@@ -36,13 +36,14 @@ ls $WORKDIR/venv/bin/* | xargs sed -i 's@#!.*@#!/projappl/project_462000007/ABFE
 
 ```bash
 # add installed binaries to $PATH 
-export PATH="/projappl/project_xxx/ABFE_workflow/bin:$PATH"
+export PATH="/projappl/project_462000007/ABFE_workflow/bin:$PATH"
+export PYTHONUSERBASE="/scratch/project_462000007/yetukuri/ABFE_workflow/venv"
+export WORKDIR="/scratch/project_462000007/yetukuri/ABFE_workflow"
+export PATH="$WORKDIR/venv/bin:$PATH"
+
 # check if ABFE workflow is installed properly
 cli-abfe -h
 # check if toy example can be run
-WORKDIR="/scratch/project_462000007/$USER/ABFE_workflow"
-export PATH="/projappl/project_462000007/ABFE_workflow/bin:$PATH"
-export PYTHONUSERBASE="/scratch/project_462000007/$USER/ABFE_workflow/venv"
 # just test with one ligand: ligand-4.sdf
 mv ${WORKDIR}/examples/data/CyclophilinD_min/ligands ${WORKDIR}/examples/data/CyclophilinD_min/ligands_orig
 mkdir ${WORKDIR}/examples/data/CyclophilinD_min/ligands && cp ${WORKDIR}/examples/data/CyclophilinD_min/ligands_orig/ligand-4.sdf  ${WORKDIR}/examples/data/CyclophilinD_min/ligands 
