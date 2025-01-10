@@ -50,7 +50,7 @@ cli-abfe -p ${WORKDIR}/examples/data/CyclophilinD_min/receptor.pdb  -l ${WORKDIR
 cd ${WORKDIR}/Results
 wget https://a3s.fi/abfe/abfe_lumi.tar.gz && tar -xavf abfe_lumi.tar.gz && rm abfe_lumi.tar.gz
 cp Snakefile.smk abfe_lumi/  && cd abfe_lumi
- bash prepare_abfe_for_lumi.sh
+bash prepare_abfe_for_lumi.sh   # this script points to ABFE environment on LUMI project_462000007, replace with your own project before running.
 
 # Above bash script (prepare_abfe_for_lumi.sh) submits CPU and GPU jobs  automatically. Once the submitted jobs are run successfully, you can go to the the folder, Final_job folder and submit final job to gather the final ABFE results.
 sbatch  Final_job/lumi_batch_abfe_final.sh
