@@ -53,10 +53,7 @@ wget https://a3s.fi/abfe/abfe_lumi.tar.gz && tar -xavf abfe_lumi.tar.gz && rm ab
 cp Snakefile.smk abfe_lumi/  && cd abfe_lumi
  bash prepare_abfe_for_lumi.sh
 
-# Run jobs on LUMI by going into respective directories 
-cd slurm_jobs
-sbatch  cpujobs-*/lumi_batch_hq_cpu.sh
-sbatch  gpujobs-*/lumi_batch_hq_gpu.sh
+# Above bash script (prepare_abfe_for_lumi.sh) automatically submits CPU and GPU jobs. Once the submitted jobs are run successfully, you can go to the Final_job folder and submit final job to gather the results.
 sbatch  Final_job/lumi_batch_abfe_final.sh
 ```
 
