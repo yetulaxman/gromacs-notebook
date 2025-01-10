@@ -1,5 +1,5 @@
 # Notes on deploying ABFE_Workflow in LUMI environment (WIP)
-ABFE workflow [GitHub repository](https://github.com/bigginlab/ABFE_workflow) is cloned and modified some hard-coded scripts from the workflow to fit to the slurm queues on LUMI. 
+The orginal ABFE workflow [GitHub repository](https://github.com/bigginlab/ABFE_workflow) is slightly customised for LUMI supercomputer. 
 
 ## Login to LUMI supercomputer
 
@@ -13,7 +13,7 @@ git clone https://github.com/yetulaxman/ABFE_workflow.git
 
 Install ABFE_Workflow using container wrapper as below:
 ```bash
-cd /scartch/project_xxxx/$USER/ABFE_workflow
+cd /scartch/project_xxxx/$USER/ABFE_workflow    # replace with the project number in question
 module  purge
 module load LUMI
 module load lumi-container-wrapper
@@ -22,13 +22,13 @@ mkdir -p /projappl/project_xxx/ABFE_workflow
 conda-containerize new --prefix  /projappl/project_xxxx/ABFE_workflow  environment.yml
 export PATH="/projappl/project_xxxx/ABFE_workflow/bin:$PATH"
 # install ABFE and MDanalysis as venv - you can modify the scripts as needed unlike those installed in LUMI container wrapper env
-export PYTHONUSERBASE="/scratch/project_462000007/$USER/ABFE_workflow/venv"
+export PYTHONUSERBASE="/scratch/project_xxxx/$USER/ABFE_workflow/venv"
 pip3 install --user  .
 pip3 install --user MDAnalysis==2.8.0
 # Do some hacks to prevent errors from python interpreter
-sed -i 's@#!.*@#!/projappl/project_462000007/ABFE_workflow/bin/python@g' /projappl/project_xxxx/ABFE_workflow/bin/snakemake
+sed -i 's@#!.*@#!/projappl/project_xxxx/ABFE_workflow/bin/python@g' /projappl/project_xxxx/ABFE_workflow/bin/snakemake
 export WORKDIR="/scratch/project_xxxx/$USER/ABFE_workflow"
-ls $WORKDIR/venv/bin/* | xargs sed -i 's@#!.*@#!/projappl/project_462000007/ABFE_workflow/bin/python@g'
+ls $WORKDIR/venv/bin/* | xargs sed -i 's@#!.*@#!/projappl/project_xxxxx/ABFE_workflow/bin/python@g'
 ```
 > In order to prevent errors Tpx format related errors, change supperted version from 133 to 134 in MDanalysis scripts as expected from Gromacs v2024.3 ( go to line starting with "SUPPORTED_VERSIONS" in the script here : venv/lib/python3.10/site-packages/MDAnalysis/topology/tpr/setting.py and change 133 to 134 in the list of supported version) ..yes bit cheating !!!
 
