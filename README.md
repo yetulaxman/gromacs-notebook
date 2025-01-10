@@ -30,9 +30,9 @@ pip3 install --user MDAnalysis==2.8.0
 sed -i 's@#!.*@#!/projappl/project_462000007/ABFE_workflow/bin/python@g' /projappl/project_462000007/ABFE_workflow/bin/snakemake
 ls $WORKDIR/venv/bin/* | xargs sed -i 's@#!.*@#!/projappl/project_462000007/ABFE_workflow/bin/python@g'
 ```
-> In order to prevent errors Tpx format related errors, change supperted version from 133 to 134 in MDanalysis scripts as expected from Gromacs v2024.3 ( go to line starting with "SUPPORTED_VERSIONS" in the script here : venv/lib/python3.10/site-packages/MDAnalysis/topology/tpr/setting.py and change 133 to 134 in the list of supported version) ..yes cheating !!!
+> In order to prevent errors Tpx format related errors, change supperted version from 133 to 134 in MDanalysis scripts as expected from Gromacs v2024.3 ( go to line starting with "SUPPORTED_VERSIONS" in the script here : venv/lib/python3.10/site-packages/MDAnalysis/topology/tpr/setting.py and change 133 to 134 in the list of supported version) ..yes bit cheating !!!
 
-### Running ABFE_Workflow 
+### Running ABFE_Workflow on LUMI
 
 ```bash
 # add installed binaries to $PATH 
@@ -43,8 +43,7 @@ export PATH="$WORKDIR/venv/bin:$PATH"
 
 # check if ABFE workflow is installed properly
 cli-abfe -h
-# check if toy example can be run
-# just test with one ligand: ligand-4.sdf
+# Test run with one ligand: ligand-4.sdf
 mv ${WORKDIR}/examples/data/CyclophilinD_min/ligands ${WORKDIR}/examples/data/CyclophilinD_min/ligands_orig
 mkdir ${WORKDIR}/examples/data/CyclophilinD_min/ligands && cp ${WORKDIR}/examples/data/CyclophilinD_min/ligands_orig/ligand-4.sdf  ${WORKDIR}/examples/data/CyclophilinD_min/ligands 
 cli-abfe -p ${WORKDIR}/examples/data/CyclophilinD_min/receptor.pdb  -l ${WORKDIR}/examples/data/CyclophilinD_min/ligands -o ${WORKDIR}/Results -ncl 7  -njl 10  -njr 2 -nr 2
@@ -57,4 +56,6 @@ cp Snakefile.smk abfe_lumi/  && cd abfe_lumi
 sbatch  Final_job/lumi_batch_abfe_final.sh
 ```
 
-### Trouble shooting
+### Trouble shooting guide
+
+
