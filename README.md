@@ -65,7 +65,7 @@ export PYTHONUSERBASE="/scratch/project_xxxxx/yetukuri/ABFE_workflow/venv"
 pip3 install --user pyopenssl
 pip3 install pyopenssl --upgrade
 ```
-2. if you see the issue "LockException:Error: Directory cannot be locked or similar ", you can either perform "snakemake –unlock" or delete  ".snakemake directory"
+2. if you see the issue "LockException:Error: Directory cannot be locked or similar ", you can either perform "snakemake –unlock" or delete  ".snakemake" directory 
 3. In the latest gromacs versions, there may be fatal errors; "Option -pbc mol requires a .tpr file for the -s option", one solution is to remove "–pbc mol"
 4. Snakemake error: "OSError: Missing files after 1000 seconds. This might be due to filesystem latency"  increase snakemake argument --latency-wait ( e.g., --latency-wait 2000 )
 
